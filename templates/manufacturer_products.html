@@ -1,0 +1,720 @@
+
+{% extends "base.html" %}
+
+{% block title %}Product Management | DigiPass{% endblock %}
+
+{% block breadcrumb %}Manufacturer / Product Management{% endblock %}
+
+{% block page_title %}Product Management{% endblock %}
+
+{% block page_subtitle %}
+Manage your company's registered products, update their lifecycle status and maintain product records.
+{% endblock %}
+
+{% block content %}
+
+<style>
+/* MANUFACTURER WORKSPACE */
+
+.manufacturer-page {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.manufacturer-company-banner {
+    background: linear-gradient(120deg, #194b3b, #28694f);
+    color: #fff;
+    padding: 30px;
+    border-radius: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 12px 30px rgba(29, 76, 58, 0.12);
+}
+
+.manufacturer-company-banner h2 {
+    color: #fff;
+    font-size: 25px;
+    margin: 10px 0;
+}
+
+.manufacturer-company-banner p {
+    color: #d9e8d8;
+    margin: 5px 0;
+}
+
+.manufacturer-eyebrow {
+    color: #c8dfad;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.manufacturer-banner-icon {
+    font-size: 65px;
+    opacity: .8;
+}
+
+.manufacturer-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.manufacturer-summary-card {
+    background: var(--surface, #fffdf8);
+    border: 1px solid var(--border, #e9e5d9);
+    border-radius: 17px;
+    padding: 22px;
+}
+
+.manufacturer-summary-card span {
+    display: block;
+    color: var(--muted, #78847a);
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.manufacturer-summary-card strong {
+    display: block;
+    color: var(--heading, #204b3b);
+    font-size: 29px;
+}
+
+.manufacturer-summary-icon {
+    font-size: 23px;
+    margin-bottom: 12px;
+}
+
+/* QUICK ACTIONS */
+
+.manufacturer-section-heading {
+    margin-bottom: 18px;
+}
+
+.manufacturer-section-heading h2 {
+    color: var(--heading, #204b3b);
+    margin: 0 0 6px;
+    font-size: 21px;
+}
+
+.manufacturer-section-heading p {
+    color: var(--muted, #78847a);
+    margin: 0;
+    font-size: 14px;
+}
+
+.manufacturer-action-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.manufacturer-action-card {
+    background: var(--surface, #fffdf8);
+    border: 1px solid var(--border, #e9e5d9);
+    border-radius: 16px;
+    padding: 20px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.manufacturer-action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(35, 72, 52, .09);
+}
+
+.manufacturer-action-icon {
+    width: 43px;
+    height: 43px;
+    border-radius: 13px;
+    display: grid;
+    place-items: center;
+    background: #e7efe1;
+    color: #285d43;
+    font-size: 21px;
+}
+
+.manufacturer-action-card h3 {
+    color: var(--heading, #204b3b);
+    font-size: 15px;
+    margin: 0;
+}
+
+.manufacturer-action-card p {
+    color: var(--muted, #78847a);
+    font-size: 12px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.manufacturer-action-link {
+    color: #397653;
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: auto;
+}
+
+/* INVENTORY */
+
+.manufacturer-inventory {
+    background: var(--surface, #fffdf8);
+    border: 1px solid var(--border, #e9e5d9);
+    border-radius: 20px;
+    padding: 24px;
+}
+
+.manufacturer-inventory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.manufacturer-inventory-header h2 {
+    color: var(--heading, #204b3b);
+    margin: 0 0 6px;
+    font-size: 21px;
+}
+
+.manufacturer-inventory-header p {
+    color: var(--muted, #78847a);
+    margin: 0;
+    font-size: 13px;
+}
+
+.manufacturer-search {
+    max-width: 310px;
+    width: 100%;
+    position: relative;
+}
+
+.manufacturer-search input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border, #e5e2d8);
+    border-radius: 11px;
+    background: var(--input-bg, #fff);
+    color: var(--text, #29372f);
+    outline: none;
+}
+
+.manufacturer-search input:focus {
+    border-color: #679579;
+    box-shadow: 0 0 0 3px rgba(103, 149, 121, .12);
+}
+
+.manufacturer-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+}
+
+.manufacturer-table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.manufacturer-table th {
+    background: #e9efe4;
+    color: #315b43;
+    font-size: 11px;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+    padding: 15px 13px;
+    white-space: nowrap;
+}
+
+.manufacturer-table td {
+    padding: 16px 13px;
+    border-bottom: 1px solid var(--border, #eeeae0);
+    color: var(--text, #35443b);
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.manufacturer-table tbody tr:hover {
+    background: rgba(226, 237, 221, .25);
+}
+
+.product-id {
+    color: #397653;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.product-name {
+    color: var(--heading, #204b3b);
+    font-weight: 700;
+}
+
+.status-pill {
+    display: inline-block;
+    padding: 6px 11px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-manufactured {
+    background: #e9eee9;
+    color: #526b58;
+}
+
+.status-distributed {
+    background: #e5edfa;
+    color: #426c9b;
+}
+
+.status-in-use {
+    background: #e3f1e5;
+    color: #31734a;
+}
+
+.status-maintenance {
+    background: #fff0d9;
+    color: #a36a1d;
+}
+
+.status-refurbished {
+    background: #eee8f8;
+    color: #7653a3;
+}
+
+.status-recycled {
+    background: #dceee5;
+    color: #24714d;
+}
+
+.status-update-form {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 190px;
+}
+
+.status-update-form select {
+    min-width: 125px;
+    padding: 8px;
+    margin: 0;
+    border: 1px solid var(--border, #deded3);
+    border-radius: 8px;
+    background: var(--input-bg, #fff);
+    color: var(--text, #29372f);
+    font-size: 11px;
+}
+
+.status-update-form button {
+    padding: 9px 12px;
+    border-radius: 8px;
+    background: #286b50;
+    color: white;
+    border: none;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.status-update-form button:hover {
+    background: #194b3b;
+}
+
+.manufacturer-empty {
+    text-align: center;
+    padding: 45px 20px;
+    color: var(--muted, #78847a);
+}
+
+.manufacturer-empty-icon {
+    font-size: 35px;
+    margin-bottom: 12px;
+}
+
+.manufacturer-empty h3 {
+    color: var(--heading, #204b3b);
+    margin: 0 0 8px;
+}
+
+.manufacturer-empty p {
+    font-size: 13px;
+}
+
+.manufacturer-empty a {
+    display: inline-block;
+    margin-top: 12px;
+    color: #397653;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.manufacturer-back {
+    color: #397653;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+@media(max-width: 1000px) {
+    .manufacturer-action-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media(max-width: 650px) {
+    .manufacturer-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .manufacturer-action-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .manufacturer-company-banner {
+        padding: 22px;
+    }
+
+    .manufacturer-banner-icon {
+        display: none;
+    }
+
+    .manufacturer-inventory {
+        padding: 15px;
+    }
+
+    .manufacturer-search {
+        max-width: 100%;
+    }
+}
+</style>
+
+
+<div class="manufacturer-page">
+
+    <!-- COMPANY BANNER -->
+    <section class="manufacturer-company-banner">
+
+        <div>
+            <span class="manufacturer-eyebrow">
+                MANUFACTURER WORKSPACE
+            </span>
+
+            {% if company %}
+                <h2>{{ company[0] }}</h2>
+                <p>⌖ {{ company[1] }}</p>
+            {% else %}
+                <h2>Your Product Workspace</h2>
+            {% endif %}
+
+            <p>Manage your products and maintain transparent product records.</p>
+        </div>
+
+        <div class="manufacturer-banner-icon">♻</div>
+
+    </section>
+
+
+    <!-- SUMMARY CARDS -->
+    <section class="manufacturer-summary">
+
+        <article class="manufacturer-summary-card">
+            <div class="manufacturer-summary-icon">▦</div>
+            <span>Total Registered Products</span>
+            <strong>{{ products|length }}</strong>
+        </article>
+
+        <article class="manufacturer-summary-card">
+            <div class="manufacturer-summary-icon">✓</div>
+            <span>Manufactured Products</span>
+            <strong>
+                {{ products|selectattr("6", "equalto", "Manufactured")|list|length }}
+            </strong>
+        </article>
+
+        <article class="manufacturer-summary-card">
+            <div class="manufacturer-summary-icon">♻</div>
+            <span>Recycled Products</span>
+            <strong>
+                {{ products|selectattr("6", "equalto", "Recycled")|list|length }}
+            </strong>
+        </article>
+
+    </section>
+
+
+    <!-- QUICK ACTIONS -->
+    <section>
+
+        <div class="manufacturer-section-heading">
+            <h2>Product operations</h2>
+            <p>Quick access to your product management activities.</p>
+        </div>
+
+        <div class="manufacturer-action-grid">
+
+            <a href="{{ url_for('register_product') }}"
+               class="manufacturer-action-card">
+
+                <div class="manufacturer-action-icon">＋</div>
+                <h3>Register New Product</h3>
+                <p>Add a new product to your company's digital passport inventory.</p>
+                <span class="manufacturer-action-link">Register product →</span>
+
+            </a>
+
+
+            <a href="{{ url_for('add_component') }}"
+               class="manufacturer-action-card">
+
+                <div class="manufacturer-action-icon">◈</div>
+                <h3>Manage Components</h3>
+                <p>Add materials, component quantities and product composition.</p>
+                <span class="manufacturer-action-link">Add components →</span>
+
+            </a>
+
+
+            <a href="{{ url_for('add_lifecycle_event') }}"
+               class="manufacturer-action-card">
+
+                <div class="manufacturer-action-icon">⟳</div>
+                <h3>Lifecycle Events</h3>
+                <p>Record manufacturing, distribution and other product activities.</p>
+                <span class="manufacturer-action-link">Add lifecycle event →</span>
+
+            </a>
+
+
+            <a href="{{ url_for('add_ownership') }}"
+               class="manufacturer-action-card">
+
+                <div class="manufacturer-action-icon">♙</div>
+                <h3>Ownership Records</h3>
+                <p>Maintain the ownership and transfer history of your products.</p>
+                <span class="manufacturer-action-link">Manage ownership →</span>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- PRODUCT INVENTORY -->
+    <section class="manufacturer-inventory">
+
+        <div class="manufacturer-inventory-header">
+
+            <div>
+                <h2>Product inventory</h2>
+                <p>View and update products registered under your company.</p>
+            </div>
+
+            <div class="manufacturer-search">
+                <input
+                    type="text"
+                    id="productSearch"
+                    placeholder="⌕ Search products..."
+                    onkeyup="filterProducts()"
+                >
+            </div>
+
+        </div>
+
+
+        {% if products %}
+
+        <div class="manufacturer-table-wrap">
+
+            <table class="manufacturer-table">
+
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Product Name</th>
+                        <th>Type</th>
+                        <th>Model Number</th>
+                        <th>Production Date</th>
+                        <th>Warranty End</th>
+                        <th>Status</th>
+                        <th>Update Status</th>
+                    </tr>
+                </thead>
+
+                <tbody id="productTableBody">
+
+                    {% for product in products %}
+
+                    <tr class="product-row">
+
+                        <td class="product-id">{{ product[0] }}</td>
+
+                        <td class="product-name">{{ product[1] }}</td>
+
+                        <td>{{ product[2] }}</td>
+
+                        <td>{{ product[3] }}</td>
+
+                        <td>{{ product[4] }}</td>
+
+                        <td>{{ product[5] }}</td>
+
+                        <td>
+                            {% if product[6] == "Manufactured" %}
+                                <span class="status-pill status-manufactured">
+                                    Manufactured
+                                </span>
+                            {% elif product[6] == "Distributed" %}
+                                <span class="status-pill status-distributed">
+                                    Distributed
+                                </span>
+                            {% elif product[6] == "In Use" %}
+                                <span class="status-pill status-in-use">
+                                    In Use
+                                </span>
+                            {% elif product[6] == "Under Maintenance" %}
+                                <span class="status-pill status-maintenance">
+                                    Under Maintenance
+                                </span>
+                            {% elif product[6] == "Refurbished" %}
+                                <span class="status-pill status-refurbished">
+                                    Refurbished
+                                </span>
+                            {% elif product[6] == "Recycled" %}
+                                <span class="status-pill status-recycled">
+                                    Recycled
+                                </span>
+                            {% else %}
+                                <span class="status-pill status-manufactured">
+                                    {{ product[6] }}
+                                </span>
+                            {% endif %}
+                        </td>
+
+
+                        <td>
+
+                            <form method="POST"
+      class="status-update-form"
+      action="{{ url_for('update_product_status', product_id=product[0]) }}">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <select name="status" required>
+
+        <option value="Manufactured"
+            {% if product[6] == "Manufactured" %}selected{% endif %}>
+            Manufactured
+        </option>
+
+        <option value="Distributed"
+            {% if product[6] == "Distributed" %}selected{% endif %}>
+            Distributed
+        </option>
+
+        <option value="In Use"
+            {% if product[6] == "In Use" %}selected{% endif %}>
+            In Use
+        </option>
+
+        <option value="Under Maintenance"
+            {% if product[6] == "Under Maintenance" %}selected{% endif %}>
+            Under Maintenance
+        </option>
+
+        <option value="Refurbished"
+            {% if product[6] == "Refurbished" %}selected{% endif %}>
+            Refurbished
+        </option>
+
+        <option value="Recycled"
+            {% if product[6] == "Recycled" %}selected{% endif %}>
+            Recycled
+        </option>
+
+    </select>
+
+    <button type="submit">Update</button>
+
+</form>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div id="noProductsFound" class="manufacturer-empty" style="display:none;">
+            <div class="manufacturer-empty-icon">⌕</div>
+            <h3>No matching products</h3>
+            <p>Try searching with another product name, ID or model number.</p>
+        </div>
+
+        {% else %}
+
+        <div class="manufacturer-empty">
+            <div class="manufacturer-empty-icon">▦</div>
+            <h3>No products registered yet</h3>
+            <p>Start building your company's digital product passport inventory.</p>
+            <a href="{{ url_for('register_product') }}">
+                + Register your first product
+            </a>
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <a href="{{ url_for('dashboard') }}" class="manufacturer-back">
+        ← Back to Workspace
+    </a>
+
+</div>
+
+
+<script>
+function filterProducts() {
+
+    const input = document.getElementById("productSearch");
+    const filter = input.value.toLowerCase();
+
+    const rows = document.querySelectorAll(".product-row");
+    const noResults = document.getElementById("noProductsFound");
+
+    let visibleCount = 0;
+
+    rows.forEach(function(row) {
+
+        const rowText = row.innerText.toLowerCase();
+
+        if (rowText.includes(filter)) {
+            row.style.display = "";
+            visibleCount++;
+        } else {
+            row.style.display = "none";
+        }
+
+    });
+
+    if (noResults) {
+        noResults.style.display = visibleCount === 0 ? "block" : "none";
+    }
+}
+</script>
+
+{% endblock %}

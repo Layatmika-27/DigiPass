@@ -1,0 +1,560 @@
+
+{% extends "base.html" %}
+
+{% block title %}Add Maintenance Record | DigiPass{% endblock %}
+
+{% block breadcrumb %}
+<span>Service Center</span>
+<span class="breadcrumb-separator">/</span>
+<span>Maintenance Records</span>
+{% endblock %}
+
+{% block page_title %}Maintenance Management{% endblock %}
+
+{% block page_subtitle %}
+Record product servicing, inspections, repairs and maintenance expenses.
+{% endblock %}
+
+{% block content %}
+
+<style>
+.maintenance-page {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.maintenance-intro {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 24px;
+    margin-bottom: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+}
+
+.maintenance-intro-icon {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 15px;
+    background: rgba(91, 139, 101, 0.13);
+    font-size: 25px;
+}
+
+.maintenance-intro h3 {
+    margin: 0 0 5px;
+    color: var(--heading);
+    font-size: 17px;
+}
+
+.maintenance-intro p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.maintenance-card {
+    padding: 30px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(30, 60, 40, 0.04);
+}
+
+.maintenance-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 22px;
+}
+
+.maintenance-section-icon {
+    width: 39px;
+    height: 39px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(91, 139, 101, 0.12);
+    border-radius: 12px;
+    font-size: 19px;
+}
+
+.maintenance-section-heading h3 {
+    margin: 0;
+    color: var(--heading);
+    font-size: 16px;
+}
+
+.maintenance-section-heading p {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.maintenance-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 21px;
+}
+
+.maintenance-form-group {
+    min-width: 0;
+}
+
+.maintenance-form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.maintenance-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--heading);
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.maintenance-required {
+    color: #bd715b;
+}
+
+.maintenance-form-group input,
+.maintenance-form-group select,
+.maintenance-form-group textarea {
+    width: 100%;
+    min-height: 45px;
+    padding: 11px 13px;
+    color: var(--text);
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    font-family: inherit;
+    font-size: 13px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.maintenance-form-group textarea {
+    min-height: 110px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.maintenance-form-group input:focus,
+.maintenance-form-group select:focus,
+.maintenance-form-group textarea:focus {
+    border-color: #6b9b75;
+    box-shadow: 0 0 0 3px rgba(107, 155, 117, 0.13);
+}
+
+.maintenance-form-group select option {
+    color: var(--text);
+    background: var(--surface);
+}
+
+.maintenance-form-group input::placeholder,
+.maintenance-form-group textarea::placeholder {
+    color: var(--muted);
+    opacity: 0.75;
+}
+
+.maintenance-field-hint {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.maintenance-divider {
+    height: 1px;
+    margin: 28px 0 23px;
+    background: var(--border);
+}
+
+.maintenance-cost-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 18px;
+    margin-top: 24px;
+    background: rgba(91, 139, 101, 0.08);
+    border: 1px solid rgba(91, 139, 101, 0.19);
+    border-radius: 12px;
+}
+
+.maintenance-cost-box span {
+    font-size: 20px;
+}
+
+.maintenance-cost-box p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.maintenance-cost-box strong {
+    color: var(--heading);
+}
+
+.maintenance-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.maintenance-note {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.maintenance-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.maintenance-cancel-btn,
+.maintenance-submit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 43px;
+    padding: 0 19px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 650;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.maintenance-cancel-btn {
+    color: var(--text);
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+}
+
+.maintenance-cancel-btn:hover {
+    border-color: #83a68a;
+}
+
+.maintenance-submit-btn {
+    color: white;
+    background: #326b4b;
+    border: 1px solid #326b4b;
+}
+
+.maintenance-submit-btn:hover {
+    background: #24563a;
+    transform: translateY(-1px);
+}
+
+.maintenance-flash-messages {
+    margin-bottom: 20px;
+}
+
+.maintenance-flash-message {
+    padding: 12px 15px;
+    margin-bottom: 9px;
+    color: var(--text);
+    background: rgba(190, 143, 92, 0.12);
+    border: 1px solid rgba(190, 143, 92, 0.3);
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+@media (max-width: 650px) {
+    .maintenance-card {
+        padding: 21px 17px;
+    }
+
+    .maintenance-form-grid {
+        grid-template-columns: 1fr;
+        gap: 17px;
+    }
+
+    .maintenance-form-group.full-width {
+        grid-column: auto;
+    }
+
+    .maintenance-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .maintenance-buttons {
+        width: 100%;
+    }
+
+    .maintenance-buttons a,
+    .maintenance-buttons button {
+        flex: 1;
+    }
+}
+</style>
+
+<div class="maintenance-page">
+
+    <div class="maintenance-intro">
+        <div class="maintenance-intro-icon">🔧</div>
+        <div>
+            <h3>Keep every product in good condition</h3>
+            <p>
+                Maintain a reliable service history by documenting
+                inspections, repairs, routine servicing and component
+                replacements throughout a product's lifecycle.
+            </p>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="maintenance-flash-messages">
+                {% for message in messages %}
+                    <div class="maintenance-flash-message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="maintenance-card">
+
+        <div class="maintenance-section-heading">
+            <div class="maintenance-section-icon">📦</div>
+            <div>
+                <h3>Product & Service Details</h3>
+                <p>Identify the product and the type of maintenance performed.</p>
+            </div>
+        </div>
+
+        <form method="POST" onsubmit="return validateMaintenanceForm()">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="maintenance-form-grid">
+
+                <div class="maintenance-form-group">
+                    <label>
+                        Product ID
+                        <span class="maintenance-required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="product_id"
+                        placeholder="Example: DPP001"
+                        required
+                    >
+
+                    <span class="maintenance-field-hint">
+                        Enter the registered product identifier.
+                    </span>
+                </div>
+
+                <div class="maintenance-form-group">
+                    <label>
+                        Maintenance Date
+                        <span class="maintenance-required">*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        name="maintenance_date"
+                        required
+                    >
+
+                    <span class="maintenance-field-hint">
+                        Date when the service was performed.
+                    </span>
+                </div>
+
+                <div class="maintenance-form-group full-width">
+                    <label>
+                        Maintenance Type
+                        <span class="maintenance-required">*</span>
+                    </label>
+
+                    <select name="maintenance_type" required>
+                        <option value="">Select Type</option>
+                        <option value="Routine Maintenance">Routine Maintenance</option>
+                        <option value="Repair">Repair</option>
+                        <option value="Inspection">Inspection</option>
+                        <option value="Component Replacement">Component Replacement</option>
+                    </select>
+
+                    <span class="maintenance-field-hint">
+                        Choose the category that best describes the service.
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="maintenance-divider"></div>
+
+            <div class="maintenance-section-heading">
+                <div class="maintenance-section-icon">🛠️</div>
+                <div>
+                    <h3>Service Information</h3>
+                    <p>Document the work performed and the people responsible.</p>
+                </div>
+            </div>
+
+            <div class="maintenance-form-grid">
+
+                <div class="maintenance-form-group full-width">
+                    <label>
+                        Description
+                        <span class="maintenance-required">*</span>
+                    </label>
+
+                    <textarea
+                        name="description"
+                        rows="4"
+                        placeholder="Describe the maintenance work, issues identified, repairs performed or components replaced..."
+                        required
+                    ></textarea>
+
+                    <span class="maintenance-field-hint">
+                        Include relevant details about the service.
+                    </span>
+                </div>
+
+                <div class="maintenance-form-group">
+                    <label>
+                        Technician Name
+                        <span class="maintenance-required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="technician_name"
+                        placeholder="Example: Arun Kumar"
+                        required
+                    >
+                </div>
+
+                <div class="maintenance-form-group">
+                    <label>
+                        Service Center
+                        <span class="maintenance-required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="service_center"
+                        placeholder="Example: GreenTech Service Center"
+                        required
+                    >
+                </div>
+
+            </div>
+
+            <div class="maintenance-divider"></div>
+
+            <div class="maintenance-section-heading">
+                <div class="maintenance-section-icon">💰</div>
+                <div>
+                    <h3>Maintenance Cost</h3>
+                    <p>Record the total expense associated with the service.</p>
+                </div>
+            </div>
+
+            <div class="maintenance-form-grid">
+
+                <div class="maintenance-form-group">
+                    <label>
+                        Maintenance Cost (₹)
+                        <span class="maintenance-required">*</span>
+                    </label>
+
+                    <input
+                        type="number"
+                        name="cost"
+                        placeholder="Example: 1500.00"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
+
+                    <span class="maintenance-field-hint">
+                        Enter the cost in Indian Rupees. Zero is allowed.
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="maintenance-cost-box">
+                <span>📋</span>
+                <p>
+                    <strong>Why maintain service records?</strong><br>
+                    Maintenance history helps track product reliability,
+                    identify recurring issues, monitor repair expenses
+                    and support informed refurbishment decisions.
+                </p>
+            </div>
+
+            <div class="maintenance-divider"></div>
+
+            <div class="maintenance-actions">
+
+                <span class="maintenance-note">
+                    * All fields are mandatory.
+                </span>
+
+                <div class="maintenance-buttons">
+                    <a
+                        href="{{ url_for('dashboard') }}"
+                        class="maintenance-cancel-btn"
+                    >
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="maintenance-submit-btn">
+                        Save Maintenance Record →
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+<script>
+function validateMaintenanceForm() {
+
+    const cost = document.querySelector(
+        '[name="cost"]'
+    ).value;
+
+    const maintenanceDate = document.querySelector(
+        '[name="maintenance_date"]'
+    ).value;
+
+    if (!maintenanceDate) {
+        alert("Please select a maintenance date.");
+        return false;
+    }
+
+    if (cost === "" || Number(cost) < 0) {
+        alert("Maintenance cost must be zero or greater.");
+        return false;
+    }
+
+    return true;
+}
+</script>
+
+{% endblock %}

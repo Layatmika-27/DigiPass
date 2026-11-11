@@ -1,0 +1,388 @@
+
+{% extends "base.html" %}
+
+{% block title %}Add Recycling Record | DigiPass{% endblock %}
+
+{% block breadcrumb %}
+<span>Recycler</span>
+<span class="breadcrumb-separator">/</span>
+<span>Add Recycling Record</span>
+{% endblock %}
+
+{% block page_title %}Add Recycling Record{% endblock %}
+{% block page_subtitle %}
+Record recovered materials and document a product's recycling journey.
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .recycling-page {
+        max-width: 950px;
+        margin: 0 auto;
+    }
+
+    .recycling-intro {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 22px;
+        margin-bottom: 24px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+    }
+
+    .recycling-icon {
+        width: 58px;
+        height: 58px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        border-radius: 17px;
+        background: rgba(76, 135, 91, 0.13);
+        font-size: 27px;
+    }
+
+    .recycling-intro h3 {
+        margin: 0 0 6px;
+        color: var(--heading);
+        font-size: 17px;
+    }
+
+    .recycling-intro p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .recycling-form-card {
+        padding: 28px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+    }
+
+    .form-section-heading {
+        margin: 0 0 5px;
+        color: var(--heading);
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .form-section-description {
+        margin: 0 0 22px;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .recycling-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .recycling-field {
+        min-width: 0;
+    }
+
+    .recycling-field.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .recycling-field label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--heading);
+        font-size: 13px;
+        font-weight: 650;
+    }
+
+    .recycling-field input,
+    .recycling-field select {
+        width: 100%;
+        min-height: 45px;
+        padding: 11px 13px;
+        box-sizing: border-box;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--input-bg);
+        color: var(--text);
+        font: inherit;
+        font-size: 13px;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .recycling-field input:focus,
+    .recycling-field select:focus {
+        border-color: #609574;
+        box-shadow: 0 0 0 3px rgba(96, 149, 116, 0.13);
+    }
+
+    .recycling-field input::placeholder {
+        color: var(--muted);
+        opacity: 0.75;
+    }
+
+    .field-hint {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    .recycling-divider {
+        height: 1px;
+        margin: 26px 0;
+        background: var(--border);
+    }
+
+    .recycling-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 28px;
+        flex-wrap: wrap;
+    }
+
+    .recycling-back {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .recycling-back:hover {
+        color: var(--heading);
+    }
+
+    .recycling-submit {
+        padding: 12px 21px;
+        border: none;
+        border-radius: 11px;
+        background: #286B50;
+        color: white;
+        font-size: 13px;
+        font-weight: 650;
+        cursor: pointer;
+        transition: transform 0.2s, background 0.2s;
+    }
+
+    .recycling-submit:hover {
+        background: #1D553E;
+        transform: translateY(-1px);
+    }
+
+    .recycling-flash {
+        padding: 12px 15px;
+        margin-bottom: 18px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--input-bg);
+        color: var(--text);
+        font-size: 13px;
+    }
+
+    @media (max-width: 650px) {
+        .recycling-form-card {
+            padding: 20px;
+        }
+
+        .recycling-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .recycling-field.full-width {
+            grid-column: auto;
+        }
+
+        .recycling-intro {
+            align-items: flex-start;
+            padding: 17px;
+        }
+
+        .recycling-actions {
+            align-items: stretch;
+            flex-direction: column-reverse;
+        }
+
+        .recycling-submit {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="recycling-page">
+
+    <div class="recycling-intro">
+        <div class="recycling-icon">♻️</div>
+        <div>
+            <h3>Give products a second life</h3>
+            <p>
+                Document recycling activities, recovered materials and
+                recovery efficiency to strengthen the product's
+                sustainability record.
+            </p>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <div class="recycling-flash">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+    <div class="recycling-form-card">
+
+        <h3 class="form-section-heading">Recycling Information</h3>
+        <p class="form-section-description">
+            Enter the product and facility details.
+        </p>
+
+        <form method="POST" onsubmit="return validateRecyclingForm()">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+               <div class="recycling-grid">
+
+                <div class="recycling-field">
+                    <label for="product_id">Product ID</label>
+                    <input
+                        type="text"
+                        id="product_id"
+                        name="product_id"
+                        placeholder="Example: DPP001"
+                        required
+                    >
+                </div>
+
+                <div class="recycling-field">
+                    <label for="recycling_date">Recycling Date</label>
+                    <input
+                        type="date"
+                        id="recycling_date"
+                        name="recycling_date"
+                        required
+                    >
+                </div>
+
+                <div class="recycling-field full-width">
+                    <label for="recycling_facility">Recycling Facility</label>
+                    <input
+                        type="text"
+                        id="recycling_facility"
+                        name="recycling_facility"
+                        placeholder="Enter recycling facility name"
+                        required
+                    >
+                </div>
+
+                <div class="recycling-field full-width">
+                    <label for="recycling_method">Recycling Method</label>
+                    <select id="recycling_method" name="recycling_method" required>
+                        <option value="">Select Recycling Method</option>
+                        <option value="Mechanical Recycling">Mechanical Recycling</option>
+                        <option value="Chemical Recycling">Chemical Recycling</option>
+                        <option value="Thermal Recycling">Thermal Recycling</option>
+                        <option value="Material Recovery">Material Recovery</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="recycling-divider"></div>
+
+            <h3 class="form-section-heading">Material Recovery Details</h3>
+            <p class="form-section-description">
+                Specify the recovered material and its recovery performance.
+            </p>
+
+            <div class="recycling-grid">
+
+                <div class="recycling-field full-width">
+                    <label for="recovered_material">Recovered Material</label>
+                    <input
+                        type="text"
+                        id="recovered_material"
+                        name="recovered_material"
+                        placeholder="Example: Aluminium"
+                        required
+                    >
+                </div>
+
+                <div class="recycling-field">
+                    <label for="recovered_quantity">Recovered Quantity (kg)</label>
+                    <input
+                        type="number"
+                        id="recovered_quantity"
+                        name="recovered_quantity"
+                        min="0"
+                        step="0.01"
+                        placeholder="Example: 12.50"
+                        required
+                    >
+                    <span class="field-hint">Enter the quantity recovered in kilograms.</span>
+                </div>
+
+                <div class="recycling-field">
+                    <label for="recovery_percentage">Recovery Percentage (%)</label>
+                    <input
+                        type="number"
+                        id="recovery_percentage"
+                        name="recovery_percentage"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        placeholder="Example: 85.50"
+                        required
+                    >
+                    <span class="field-hint">Enter a value between 0 and 100.</span>
+                </div>
+
+            </div>
+
+            <div class="recycling-actions">
+                <a class="recycling-back" href="{{ url_for('dashboard') }}">
+                    ← Back to Dashboard
+                </a>
+
+                <button type="submit" class="recycling-submit">
+                    ♻ Save Recycling Record
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    function validateRecyclingForm() {
+        const quantity = parseFloat(
+            document.getElementById("recovered_quantity").value
+        );
+
+        const percentage = parseFloat(
+            document.getElementById("recovery_percentage").value
+        );
+
+        if (isNaN(quantity) || quantity < 0) {
+            alert("Please enter a valid recovered quantity.");
+            return false;
+        }
+
+        if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+            alert("Recovery percentage must be between 0 and 100.");
+            return false;
+        }
+
+        return true;
+    }
+</script>
+
+{% endblock %}

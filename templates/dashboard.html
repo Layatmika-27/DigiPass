@@ -1,0 +1,216 @@
+
+{% extends "base.html" %}
+
+{% block title %}Overview | DigiPass{% endblock %}
+{% block breadcrumb %}Overview{% endblock %}
+
+{% block page_title %}
+    Your workspace
+{% endblock %}
+
+{% block page_subtitle %}
+    A clearer view of your products, operations and sustainability activities.
+{% endblock %}
+
+{% block content %}
+
+<!-- WELCOME BANNER -->
+<section class="dashboard-welcome">
+    <div class="welcome-content">
+        <span class="welcome-label">YOUR DIGIPASS WORKSPACE</span>
+
+        <h2>
+            Hello, {{ full_name.split()[0] }}!
+            <span class="welcome-wave">✿</span>
+        </h2>
+
+        <p>
+            Welcome back. Your workspace is ready.
+            You're signed in as
+            <strong>{{ role }}</strong>.
+        </p>
+
+        <div class="welcome-tags">
+            <span>🌿 Product transparency</span>
+            <span>♻ Circular sustainability</span>
+        </div>
+    </div>
+
+    <div class="welcome-art" aria-hidden="true">
+        <span class="art-circle"></span>
+        <span class="art-leaf art-leaf-one">❧</span>
+        <span class="art-leaf art-leaf-two">❧</span>
+        <span class="art-flower">✿</span>
+    </div>
+</section>
+
+
+<!-- SECTION HEADING -->
+<div class="dashboard-section-heading">
+    <div>
+        <span class="section-eyebrow">YOUR TOOLS & ACTIVITIES</span>
+        <h2>Explore your workspace</h2>
+        <p>Choose an area to continue where you left off.</p>
+    </div>
+
+    <span class="role-badge">
+        <span class="role-dot"></span>
+        {{ role }}
+    </span>
+</div>
+
+
+<!-- ROLE-SPECIFIC FEATURE CARDS -->
+<div class="dashboard-grid">
+
+    {% for feature in features %}
+
+        <article class="dashboard-card">
+
+            <div class="dashboard-card-top">
+
+                <div class="dashboard-icon
+                    {% if feature[0] == 'User Management' %}icon-peach
+                    {% elif feature[0] == 'Product Management' %}icon-sage
+                    {% elif feature[0] == 'Product Search' %}icon-lavender
+                    {% elif feature[0] == 'Lifecycle Monitoring' %}icon-butter
+                    {% elif feature[0] == 'Maintenance Records' %}icon-peach
+                    {% elif feature[0] == 'Recycling Analytics' %}icon-sage
+                    {% elif feature[0] == 'Material Information' %}icon-butter
+                    {% elif feature[0] == 'Product Information' %}icon-lavender
+                    {% endif %}">
+
+                    {% if feature[0] == "User Management" %}
+                        ♙
+                    {% elif feature[0] == "Product Management" %}
+                        ▦
+                    {% elif feature[0] == "Product Search" %}
+                        ⌕
+                    {% elif feature[0] == "Lifecycle Monitoring" %}
+                        ⟳
+                    {% elif feature[0] == "Maintenance Records" %}
+                        ⚙
+                    {% elif feature[0] == "Recycling Analytics" %}
+                        ♻
+                    {% elif feature[0] == "Material Information" %}
+                        ◈
+                    {% elif feature[0] == "Product Information" %}
+                        ◉
+                    {% else %}
+                        ✿
+                    {% endif %}
+
+                </div>
+
+                <span class="card-number">
+                    {{ "%02d"|format(loop.index) }}
+                </span>
+
+            </div>
+
+            <div class="dashboard-card-body">
+                <h3>{{ feature[0] }}</h3>
+                <p>{{ feature[1] }}</p>
+            </div>
+
+            <div class="dashboard-card-action">
+
+                {% if feature[0] == "Product Management" and role == "Manufacturer" %}
+
+                    <a href="{{ url_for('manufacturer_products') }}">
+                        View company products <span>↗</span>
+                    </a>
+
+                {% elif feature[0] == "Recycling Analytics" and role == "Admin" %}
+
+                    <a href="{{ url_for('admin_analytics') }}">
+                        View system analytics <span>↗</span>
+                    </a>
+
+                {% elif feature[0] == "Lifecycle Monitoring" and role == "Admin" %}
+
+                    <a href="{{ url_for('audit_logs') }}">
+                        View audit logs <span>↗</span>
+                    </a>
+
+                {% elif feature[0] == "Lifecycle Monitoring" and role == "Manufacturer" %}
+
+                    <a href="{{ url_for('manufacturer_products') }}">
+                        View product history <span>↗</span>
+                    </a>
+
+                {% elif feature[0] == "Lifecycle Monitoring" and role == "Distributor" %}
+
+                    <a href="{{ url_for('search_product') }}">
+                        Explore lifecycle details <span>↗</span>
+                    </a>
+
+                {% elif feature[0] in ["Product Management", "Product Search"] %}
+
+                    <a href="{{ url_for('search_product') }}">
+                        Explore products <span>↗</span>
+                    </a>
+
+                {% elif feature[0] == "Maintenance Records" %}
+
+                    <a href="{{ url_for('add_maintenance') }}">
+                        Add maintenance record <span>↗</span>
+                    </a>
+
+                {% elif feature[0] == "Recycling Analytics" %}
+
+                    <a href="{{ url_for('add_recycling') }}">
+                        Add recycling record <span>↗</span>
+                    </a>
+
+                {% elif feature[0] == "User Management" %}
+
+                    <a href="{{ url_for('admin_users') }}">
+                        Manage users <span>↗</span>
+                    </a>
+
+                {% elif feature[0] == "Material Information" %}
+
+                    <a href="{{ url_for('add_component') }}">
+                        Manage components <span>↗</span>
+                    </a>
+
+                {% elif feature[0] == "Product Information" %}
+
+                    <a href="{{ url_for('search_product') }}">
+                        View product details <span>↗</span>
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </article>
+
+    {% endfor %}
+
+</div>
+
+
+<!-- SUSTAINABILITY FOOTER CARD -->
+<section class="dashboard-footer-card">
+
+    <div class="footer-card-icon">🌱</div>
+
+    <div class="footer-card-content">
+        <span class="section-eyebrow">THE DIGIPASS MISSION</span>
+
+        <h3>Every product has a story worth knowing.</h3>
+
+        <p>
+            From materials and ownership to lifecycle events
+            and recycling, DigiPass brings product information
+            together to support a more transparent and circular future.
+        </p>
+    </div>
+
+    <div class="footer-card-decoration">✿</div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,653 @@
+
+{% extends "base.html" %}
+
+{% block title %}Audit Logs | DigiPass{% endblock %}
+
+{% block breadcrumb %}
+<span>Administration</span>
+<span class="breadcrumb-separator">/</span>
+<span>Audit Logs</span>
+{% endblock %}
+
+{% block page_title %}System Audit Logs{% endblock %}
+{% block page_subtitle %}
+Track database activity, monitor record changes and maintain system accountability.
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .audit-page {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+    }
+
+    .audit-intro {
+        display: flex;
+        align-items: center;
+        gap: 17px;
+        padding: 21px 23px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 17px;
+    }
+
+    .audit-intro-icon {
+        width: 54px;
+        height: 54px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        border-radius: 15px;
+        background: rgba(76, 135, 91, 0.13);
+        font-size: 24px;
+    }
+
+    .audit-intro h3 {
+        margin: 0 0 6px;
+        color: var(--heading);
+        font-size: 16px;
+    }
+
+    .audit-intro p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .audit-section-heading {
+        margin-bottom: 13px;
+    }
+
+    .audit-section-heading h3 {
+        margin: 0 0 5px;
+        color: var(--heading);
+        font-size: 16px;
+    }
+
+    .audit-section-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .audit-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .audit-stat-card {
+        padding: 20px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+    }
+
+    .audit-stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .audit-stat-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .audit-stat-icon {
+        width: 35px;
+        height: 35px;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        font-size: 16px;
+    }
+
+    .audit-insert-icon {
+        background: rgba(50, 150, 95, 0.13);
+    }
+
+    .audit-update-icon {
+        background: rgba(205, 155, 65, 0.14);
+    }
+
+    .audit-delete-icon {
+        background: rgba(190, 90, 75, 0.13);
+    }
+
+    .audit-stat-number {
+        margin-top: 13px;
+        color: var(--heading);
+        font-size: 29px;
+        font-weight: 750;
+    }
+
+    .audit-stat-description {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    .audit-panel {
+        padding: 23px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+    }
+
+    .audit-panel-heading {
+        margin: 0 0 5px;
+        color: var(--heading);
+        font-size: 16px;
+    }
+
+    .audit-panel-description {
+        margin: 0 0 21px;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .audit-filter-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        align-items: end;
+    }
+
+    .audit-field label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--heading);
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .audit-field select {
+        width: 100%;
+        min-height: 43px;
+        padding: 10px 12px;
+        box-sizing: border-box;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: var(--input-bg);
+        color: var(--text);
+        font: inherit;
+        font-size: 12px;
+        outline: none;
+    }
+
+    .audit-field select:focus {
+        border-color: #609574;
+        box-shadow: 0 0 0 3px rgba(96, 149, 116, 0.12);
+    }
+
+    .audit-filter-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 19px;
+        flex-wrap: wrap;
+    }
+
+    .audit-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 10px 17px;
+        border: none;
+        border-radius: 9px;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .audit-apply {
+        background: #286B50;
+        color: white;
+    }
+
+    .audit-apply:hover {
+        background: #1D553E;
+        transform: translateY(-1px);
+    }
+
+    .audit-clear {
+        background: var(--input-bg);
+        color: var(--text);
+        border: 1px solid var(--border);
+    }
+
+    .audit-clear:hover {
+        border-color: #609574;
+    }
+
+    .audit-table-panel {
+        padding: 0;
+        overflow: hidden;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+    }
+
+    .audit-table-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 21px 23px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .audit-table-header h3 {
+        margin: 0 0 5px;
+        color: var(--heading);
+        font-size: 16px;
+    }
+
+    .audit-table-header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .audit-record-label {
+        padding: 6px 11px;
+        border-radius: 20px;
+        background: rgba(76, 135, 91, 0.12);
+        color: var(--heading);
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .audit-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .audit-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .audit-table th {
+        padding: 14px 16px;
+        background: var(--input-bg);
+        color: var(--muted);
+        border-bottom: 1px solid var(--border);
+        font-size: 10px;
+        font-weight: 750;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    .audit-table td {
+        padding: 15px 16px;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+        font-size: 12px;
+    }
+
+    .audit-table tbody tr:hover {
+        background: var(--input-bg);
+    }
+
+    .audit-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .audit-id {
+        color: var(--muted);
+        font-weight: 700;
+    }
+
+    .audit-table-name {
+        color: var(--heading);
+        font-weight: 650;
+    }
+
+    .audit-operation {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 750;
+    }
+
+    .operation-insert {
+        background: rgba(50, 150, 95, 0.13);
+        color: #39865A;
+    }
+
+    .operation-update {
+        background: rgba(205, 155, 65, 0.15);
+        color: #B57932;
+    }
+
+    .operation-delete {
+        background: rgba(190, 90, 75, 0.13);
+        color: #BD6255;
+    }
+
+    .audit-user {
+        font-weight: 650;
+    }
+
+    .audit-date {
+        color: var(--muted);
+    }
+
+    .audit-description {
+        max-width: 260px;
+        white-space: normal;
+        line-height: 1.5;
+    }
+
+    .audit-empty {
+        padding: 45px 20px;
+        text-align: center;
+        color: var(--muted);
+    }
+
+    .audit-empty-icon {
+        margin-bottom: 10px;
+        font-size: 29px;
+    }
+
+    .audit-empty h4 {
+        margin: 0 0 6px;
+        color: var(--heading);
+        font-size: 14px;
+    }
+
+    .audit-empty p {
+        margin: 0;
+        font-size: 12px;
+    }
+
+    .audit-back-wrapper {
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    .audit-back {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .audit-back:hover {
+        color: var(--heading);
+    }
+
+    @media (max-width: 750px) {
+        .audit-summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .audit-filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .audit-panel {
+            padding: 18px;
+        }
+
+        .audit-table-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="audit-page">
+
+    <!-- Intro -->
+    <div class="audit-intro">
+        <div class="audit-intro-icon">🛡️</div>
+
+        <div>
+            <h3>Transparency through every database action</h3>
+            <p>
+                Monitor changes made to your DigiPass database.
+                Every recorded operation helps maintain traceability,
+                accountability and data integrity.
+            </p>
+        </div>
+    </div>
+
+    <!-- Activity Summary -->
+    <div>
+        <div class="audit-section-heading">
+            <h3>Audit Activity Summary</h3>
+            <p>Overview of recorded database operations.</p>
+        </div>
+
+        <div class="audit-summary-grid">
+
+            <div class="audit-stat-card">
+                <div class="audit-stat-top">
+                    <span class="audit-stat-label">INSERT Operations</span>
+                    <span class="audit-stat-icon audit-insert-icon">➕</span>
+                </div>
+                <div class="audit-stat-number">{{ insert_count }}</div>
+                <div class="audit-stat-description">New records created</div>
+            </div>
+
+            <div class="audit-stat-card">
+                <div class="audit-stat-top">
+                    <span class="audit-stat-label">UPDATE Operations</span>
+                    <span class="audit-stat-icon audit-update-icon">✏️</span>
+                </div>
+                <div class="audit-stat-number">{{ update_count }}</div>
+                <div class="audit-stat-description">Existing records modified</div>
+            </div>
+
+            <div class="audit-stat-card">
+                <div class="audit-stat-top">
+                    <span class="audit-stat-label">DELETE Operations</span>
+                    <span class="audit-stat-icon audit-delete-icon">🗑️</span>
+                </div>
+                <div class="audit-stat-number">{{ delete_count }}</div>
+                <div class="audit-stat-description">Records deleted</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="audit-panel">
+
+        <h3 class="audit-panel-heading">Filter Audit Records</h3>
+        <p class="audit-panel-description">
+            Narrow down database activity by table, operation or user.
+        </p>
+
+        <form method="GET" action="{{ url_for('audit_logs') }}">
+
+            <div class="audit-filter-grid">
+
+                <div class="audit-field">
+                    <label for="table_name">Table Name</label>
+
+                    <select name="table_name" id="table_name">
+                        <option value="">All Tables</option>
+
+                        {% for table in table_options %}
+                        <option value="{{ table }}"
+                            {% if table_filter == table %}selected{% endif %}>
+                            {{ table }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="audit-field">
+                    <label for="operation">Operation</label>
+
+                    <select name="operation" id="operation">
+                        <option value="">All Operations</option>
+
+                        {% for operation in ['INSERT', 'UPDATE', 'DELETE'] %}
+                        <option value="{{ operation }}"
+                            {% if operation_filter == operation %}selected{% endif %}>
+                            {{ operation }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="audit-field">
+                    <label for="changed_by">Changed By</label>
+
+                    <select name="changed_by" id="changed_by">
+                        <option value="">All Users</option>
+
+                        {% for user in user_options %}
+                        <option value="{{ user[0] }}"
+                            {% if user_filter == user[0]|string %}selected{% endif %}>
+                            {{ user[1] }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="audit-filter-actions">
+
+                <button type="submit" class="audit-button audit-apply">
+                    Apply Filters
+                </button>
+
+                <a href="{{ url_for('audit_logs') }}"
+                   class="audit-button audit-clear">
+                    Clear Filters
+                </a>
+
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Audit History -->
+    <div class="audit-table-panel">
+
+        <div class="audit-table-header">
+            <div>
+                <h3>Database Activity History</h3>
+                <p>Detailed history of recorded system operations.</p>
+            </div>
+
+            <span class="audit-record-label">
+                {{ logs|length }} Records
+            </span>
+        </div>
+
+        {% if logs %}
+
+        <div class="audit-table-wrapper">
+
+            <table class="audit-table">
+
+                <thead>
+                    <tr>
+                        <th>Audit ID</th>
+                        <th>Table</th>
+                        <th>Operation</th>
+                        <th>Record ID</th>
+                        <th>Changed By</th>
+                        <th>Date & Time</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for log in logs %}
+                    <tr>
+
+                        <td class="audit-id">
+                            #{{ log.audit_id }}
+                        </td>
+
+                        <td class="audit-table-name">
+                            {{ log.table_name }}
+                        </td>
+
+                        <td>
+                            {% if log.operation == 'INSERT' %}
+                                <span class="audit-operation operation-insert">
+                                    INSERT
+                                </span>
+                            {% elif log.operation == 'UPDATE' %}
+                                <span class="audit-operation operation-update">
+                                    UPDATE
+                                </span>
+                            {% elif log.operation == 'DELETE' %}
+                                <span class="audit-operation operation-delete">
+                                    DELETE
+                                </span>
+                            {% else %}
+                                <span class="audit-operation">
+                                    {{ log.operation }}
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>{{ log.record_id }}</td>
+
+                        <td class="audit-user">
+                            {{ log.username or 'Unknown' }}
+                        </td>
+
+                        <td class="audit-date">
+                            {{ log.changed_at }}
+                        </td>
+
+                        <td class="audit-description">
+                            {{ log.description }}
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="audit-empty">
+            <div class="audit-empty-icon">📋</div>
+            <h4>No audit records found</h4>
+            <p>
+                No activity matches your current filters.
+                Try clearing the filters or check again later.
+            </p>
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    <div class="audit-back-wrapper">
+        <a href="{{ url_for('dashboard') }}" class="audit-back">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

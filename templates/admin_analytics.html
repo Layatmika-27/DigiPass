@@ -1,0 +1,619 @@
+
+{% extends "base.html" %}
+
+{% block title %}Analytics Dashboard | DigiPass{% endblock %}
+
+{% block breadcrumb %}
+<span>Administration</span>
+<span class="breadcrumb-separator">/</span>
+<span>Analytics</span>
+{% endblock %}
+
+{% block page_title %}Analytics Dashboard{% endblock %}
+
+{% block page_subtitle %}
+Monitor product activity, system operations and sustainability performance.
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .analytics-page {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .analytics-intro {
+        padding: 22px 25px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--surface);
+        display: flex;
+        align-items: center;
+        gap: 17px;
+    }
+
+    .analytics-intro-icon {
+        width: 55px;
+        height: 55px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        border-radius: 16px;
+        background: rgba(76, 135, 91, 0.13);
+        font-size: 25px;
+    }
+
+    .analytics-intro h3 {
+        margin: 0 0 6px;
+        color: var(--heading);
+        font-size: 16px;
+    }
+
+    .analytics-intro p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .analytics-section-heading {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .analytics-section-heading h3 {
+        margin: 0 0 5px;
+        color: var(--heading);
+        font-size: 17px;
+    }
+
+    .analytics-section-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .analytics-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 17px;
+    }
+
+    .analytics-card {
+        position: relative;
+        overflow: hidden;
+        padding: 21px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .analytics-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 22px rgba(35, 65, 45, 0.07);
+    }
+
+    .analytics-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .analytics-card-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .analytics-card-icon {
+        width: 37px;
+        height: 37px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        border-radius: 11px;
+        background: rgba(76, 135, 91, 0.12);
+        font-size: 17px;
+    }
+
+    .analytics-card-number {
+        margin-top: 16px;
+        color: var(--heading);
+        font-size: 30px;
+        font-weight: 750;
+        letter-spacing: -0.7px;
+        overflow-wrap: anywhere;
+    }
+
+    .analytics-card-description {
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    .analytics-chart-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 19px;
+    }
+
+    .analytics-chart-card {
+        min-width: 0;
+        padding: 23px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+    }
+
+    .analytics-chart-header {
+        margin-bottom: 20px;
+    }
+
+    .analytics-chart-header h3 {
+        margin: 0 0 6px;
+        color: var(--heading);
+        font-size: 15px;
+    }
+
+    .analytics-chart-header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    .analytics-chart-container {
+        position: relative;
+        width: 100%;
+        height: 290px;
+    }
+
+    .analytics-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        width: fit-content;
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .analytics-back:hover {
+        color: var(--heading);
+    }
+
+    @media (max-width: 850px) {
+        .analytics-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .analytics-chart-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 520px) {
+        .analytics-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .analytics-intro {
+            align-items: flex-start;
+            padding: 17px;
+        }
+
+        .analytics-card {
+            padding: 18px;
+        }
+
+        .analytics-chart-card {
+            padding: 17px;
+        }
+
+        .analytics-chart-container {
+            height: 260px;
+        }
+    }
+</style>
+
+<div class="analytics-page">
+
+    <!-- Intro Banner -->
+    <div class="analytics-intro">
+        <div class="analytics-intro-icon">📊</div>
+
+        <div>
+            <h3>Your DigiPass system at a glance</h3>
+            <p>
+                Explore key system statistics and visualize product lifecycle
+                distribution and material recovery performance.
+            </p>
+        </div>
+    </div>
+
+    <!-- KPI Section -->
+    <div class="analytics-section-heading">
+        <div>
+            <h3>System Overview</h3>
+            <p>Key statistics from your Digital Product Passport database.</p>
+        </div>
+    </div>
+
+    <div class="analytics-grid">
+
+        <!-- Total Products -->
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-card-label">Total Products</span>
+                <span class="analytics-card-icon">📦</span>
+            </div>
+            <div class="analytics-card-number">{{ total_products }}</div>
+            <div class="analytics-card-description">Registered product passports</div>
+        </div>
+
+        <!-- Manufacturers -->
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-card-label">Manufacturers</span>
+                <span class="analytics-card-icon">🏭</span>
+            </div>
+            <div class="analytics-card-number">{{ total_manufacturers }}</div>
+            <div class="analytics-card-description">Registered manufacturing partners</div>
+        </div>
+
+        <!-- Application Users -->
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-card-label">Application Users</span>
+                <span class="analytics-card-icon">👥</span>
+            </div>
+            <div class="analytics-card-number">{{ total_users }}</div>
+            <div class="analytics-card-description">Accounts registered in the system</div>
+        </div>
+
+        <!-- Lifecycle Events -->
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-card-label">Lifecycle Events</span>
+                <span class="analytics-card-icon">🔄</span>
+            </div>
+            <div class="analytics-card-number">{{ total_events }}</div>
+            <div class="analytics-card-description">Recorded product lifecycle activities</div>
+        </div>
+
+        <!-- Maintenance Records -->
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-card-label">Maintenance Records</span>
+                <span class="analytics-card-icon">🛠️</span>
+            </div>
+            <div class="analytics-card-number">{{ total_maintenance }}</div>
+            <div class="analytics-card-description">Product service and repair records</div>
+        </div>
+
+        <!-- Recycling Records -->
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-card-label">Recycling Records</span>
+                <span class="analytics-card-icon">♻️</span>
+            </div>
+            <div class="analytics-card-number">{{ total_recycling }}</div>
+            <div class="analytics-card-description">Recorded material recovery activities</div>
+        </div>
+
+        <!-- Maintenance Expenditure -->
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-card-label">Total Maintenance Cost</span>
+                <span class="analytics-card-icon">₹</span>
+            </div>
+            <div class="analytics-card-number">
+                ₹{{ "%.2f"|format(maintenance_total_cost) }}
+            </div>
+            <div class="analytics-card-description">Total recorded maintenance expenditure</div>
+        </div>
+
+        <!-- Total Materials -->
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-card-label">Total Materials</span>
+                <span class="analytics-card-icon">🧱</span>
+            </div>
+            <div class="analytics-card-number">{{ total_materials }}</div>
+            <div class="analytics-card-description">Materials registered in the database</div>
+        </div>
+
+        <!-- Recyclable Materials -->
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-card-label">Recyclable Materials</span>
+                <span class="analytics-card-icon">♻️</span>
+            </div>
+            <div class="analytics-card-number">{{ recyclable_materials }}</div>
+            <div class="analytics-card-description">Materials marked as recyclable</div>
+        </div>
+
+        <!-- Average Recovery Rate -->
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-card-label">Average Recovery Rate</span>
+                <span class="analytics-card-icon">🌱</span>
+            </div>
+            <div class="analytics-card-number">
+                {{ "%.1f"|format(average_recovery) }}%
+            </div>
+            <div class="analytics-card-description">Average recycling recovery percentage</div>
+        </div>
+
+        <!-- Average Material Recyclability -->
+        <div class="analytics-card">
+            <div class="analytics-card-top">
+                <span class="analytics-card-label">Average Material Recyclability</span>
+                <span class="analytics-card-icon">🌿</span>
+            </div>
+            <div class="analytics-card-number">
+                {{ "%.1f"|format(average_recyclability) }}%
+            </div>
+            <div class="analytics-card-description">Average recyclability of registered materials</div>
+        </div>
+
+    </div>
+
+    <!-- Charts Section -->
+    <div class="analytics-section-heading">
+        <div>
+            <h3>System Data Visualization</h3>
+            <p>Understand product distribution and recycling performance.</p>
+        </div>
+    </div>
+
+    <div class="analytics-chart-grid">
+
+        <!-- Product Status Chart -->
+        <div class="analytics-chart-card">
+            <div class="analytics-chart-header">
+                <h3>Product Status Distribution</h3>
+                <p>Breakdown of products across lifecycle statuses.</p>
+            </div>
+
+            <div class="analytics-chart-container">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Recycling Performance Chart -->
+        <div class="analytics-chart-card">
+            <div class="analytics-chart-header">
+                <h3>Recycling Performance by Material</h3>
+                <p>Quantity of recovered materials in kilograms.</p>
+            </div>
+
+            <div class="analytics-chart-container">
+                <canvas id="recyclingChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Manufacturer Performance -->
+        <div class="analytics-chart-card">
+            <div class="analytics-chart-header">
+                <h3>Manufacturer Performance</h3>
+                <p>Number of products registered by each manufacturer.</p>
+            </div>
+
+            <div class="analytics-chart-container">
+                <canvas id="manufacturerChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Lifecycle Activity -->
+        <div class="analytics-chart-card">
+            <div class="analytics-chart-header">
+                <h3>Lifecycle Activity</h3>
+                <p>Distribution of product lifecycle events by type.</p>
+            </div>
+
+            <div class="analytics-chart-container">
+                <canvas id="lifecycleChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <a class="analytics-back" href="{{ url_for('dashboard') }}">
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Product Status Distribution
+    const statusLabels = {{ status_labels | tojson }};
+    const statusValues = {{ status_values | tojson }};
+
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                label: 'Number of Products',
+                data: statusValues,
+                backgroundColor: [
+                    '#286B50',
+                    '#6E9F78',
+                    '#A9C6AE',
+                    '#D3A66D',
+                    '#78A9A0',
+                    '#8D83B7'
+                ],
+                borderWidth: 2,
+                borderColor: 'transparent',
+                hoverOffset: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        padding: 17,
+                        color: getComputedStyle(document.body)
+                            .getPropertyValue('--text').trim() || '#444',
+                        font: {
+                            size: 11
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.label + ': ' + context.parsed;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Recycling Performance by Material
+    const recyclingLabels = {{ recycling_labels | tojson }};
+    const recyclingValues = {{ recycling_values | tojson }};
+
+    new Chart(document.getElementById('recyclingChart'), {
+        type: 'bar',
+        data: {
+            labels: recyclingLabels,
+            datasets: [{
+                label: 'Recovered Quantity (kg)',
+                data: recyclingValues,
+                backgroundColor: '#609574',
+                hoverBackgroundColor: '#286B50',
+                borderRadius: 7,
+                maxBarThickness: 42
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    ticks: {
+                        color: getComputedStyle(document.body)
+                            .getPropertyValue('--muted').trim() || '#777',
+                        font: {
+                            size: 10
+                        }
+                    },
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Recovered Quantity (kg)',
+                        color: getComputedStyle(document.body)
+                            .getPropertyValue('--muted').trim() || '#777'
+                    },
+                    ticks: {
+                        color: getComputedStyle(document.body)
+                            .getPropertyValue('--muted').trim() || '#777'
+                    },
+                    grid: {
+                        color: 'rgba(130, 150, 130, 0.12)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Manufacturer Performance Chart
+    const manufacturerCtx = document.getElementById('manufacturerChart');
+
+    new Chart(manufacturerCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ manufacturer_labels | tojson }},
+            datasets: [{
+                label: 'Products Registered',
+                data: {{ manufacturer_values | tojson }},
+                backgroundColor: '#4c956c',
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+
+    // Lifecycle Activity Chart
+    const lifecycleCtx = document.getElementById('lifecycleChart');
+
+    new Chart(lifecycleCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ lifecycle_labels | tojson }},
+            datasets: [{
+                data: {{ lifecycle_values | tojson }},
+                backgroundColor: [
+                    '#386641',
+                    '#6a994e',
+                    '#a7c957',
+                    '#f2e8cf',
+                    '#bc6c25',
+                    '#dda15e',
+                    '#588157',
+                    '#90a955',
+                    '#c2d5aa',
+                    '#e9c46a'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,489 @@
+
+{% extends "base.html" %}
+
+{% block title %}User Management | DigiPass{% endblock %}
+
+{% block breadcrumb %}
+<span>Administration</span>
+<span class="breadcrumb-separator">/</span>
+<span>User Management</span>
+{% endblock %}
+
+{% block page_title %}User Management{% endblock %}
+{% block page_subtitle %}
+Manage registered accounts, monitor access and control user activation.
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .users-page {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+    }
+
+    .users-overview {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .user-stat-card {
+        padding: 19px 21px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+    }
+
+    .user-stat-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .user-stat-value {
+        margin-top: 9px;
+        color: var(--heading);
+        font-size: 27px;
+        font-weight: 750;
+    }
+
+    .users-panel {
+        overflow: hidden;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+    }
+
+    .users-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 21px 23px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .users-panel-header h3 {
+        margin: 0 0 5px;
+        color: var(--heading);
+        font-size: 16px;
+    }
+
+    .users-panel-header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .users-count {
+        padding: 7px 12px;
+        border-radius: 20px;
+        background: rgba(76, 135, 91, 0.12);
+        color: var(--heading);
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .users-flash {
+        padding: 12px 16px;
+        margin: 16px 22px 0;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--input-bg);
+        color: var(--text);
+        font-size: 13px;
+    }
+
+    .users-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .users-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .users-table th {
+        padding: 14px 17px;
+        background: var(--input-bg);
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 750;
+        letter-spacing: 0.045em;
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .users-table td {
+        padding: 16px 17px;
+        color: var(--text);
+        font-size: 12px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .users-table tbody tr {
+        transition: background 0.2s;
+    }
+
+    .users-table tbody tr:hover {
+        background: var(--input-bg);
+    }
+
+    .users-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .user-id {
+        color: var(--muted);
+        font-weight: 650;
+    }
+
+    .user-name {
+        color: var(--heading);
+        font-weight: 700;
+    }
+
+    .user-email {
+        color: var(--muted);
+    }
+
+    .role-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 20px;
+        background: rgba(76, 135, 91, 0.12);
+        color: var(--heading);
+        font-size: 11px;
+        font-weight: 650;
+    }
+
+    .account-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .account-status::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .status-active {
+        background: rgba(50, 150, 95, 0.12);
+        color: #39865A;
+    }
+
+    .status-inactive {
+        background: rgba(190, 120, 70, 0.13);
+        color: #B57945;
+    }
+
+    .user-action-form {
+        margin: 0;
+    }
+
+    .user-action-button {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: var(--input-bg);
+        color: var(--text);
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .user-action-button:hover {
+        transform: translateY(-1px);
+        border-color: #609574;
+    }
+
+    .deactivate-button:hover {
+        background: rgba(190, 120, 70, 0.12);
+        color: #B57945;
+    }
+
+    .activate-button:hover {
+        background: rgba(50, 150, 95, 0.12);
+        color: #39865A;
+    }
+
+    .current-account {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .users-empty {
+        padding: 45px 20px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .users-footer {
+        display: flex;
+        justify-content: flex-start;
+        padding: 17px 22px;
+        border-top: 1px solid var(--border);
+    }
+
+    .users-back {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .users-back:hover {
+        color: var(--heading);
+    }
+
+    @media (max-width: 700px) {
+        .users-overview {
+            grid-template-columns: 1fr;
+        }
+
+        .users-panel-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 13px;
+        }
+    }
+    .users-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.add-user-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 15px;
+    border-radius: 10px;
+    background: #4c875b;
+    color: white;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    transition: 0.2s;
+}
+
+.add-user-button:hover {
+    background: #376b46;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 700px) {
+    .users-header-actions {
+        flex-wrap: wrap;
+    }
+}
+</style>
+
+{% set total_users = users|length %}
+{% set active_users = namespace(count=0) %}
+{% set inactive_users = namespace(count=0) %}
+
+{% for user in users %}
+    {% if user[5] %}
+        {% set active_users.count = active_users.count + 1 %}
+    {% else %}
+        {% set inactive_users.count = inactive_users.count + 1 %}
+    {% endif %}
+{% endfor %}
+
+<div class="users-page">
+
+    <!-- Summary Cards -->
+    <div class="users-overview">
+
+        <div class="user-stat-card">
+            <div class="user-stat-label">Total Registered Users</div>
+            <div class="user-stat-value">{{ total_users }}</div>
+        </div>
+
+        <div class="user-stat-card">
+            <div class="user-stat-label">Active Accounts</div>
+            <div class="user-stat-value">{{ active_users.count }}</div>
+        </div>
+
+        <div class="user-stat-card">
+            <div class="user-stat-label">Inactive Accounts</div>
+            <div class="user-stat-value">{{ inactive_users.count }}</div>
+        </div>
+
+    </div>
+
+    <!-- User Management Table -->
+    <div class="users-panel">
+
+        <div class="users-panel-header">
+    <div>
+        <h3>Registered Accounts</h3>
+        <p>Review user details, roles and account access.</p>
+    </div>
+
+    <div class="users-header-actions">
+        <span class="users-count">
+            {{ total_users }} Users
+        </span>
+
+        <a href="{{ url_for('add_user') }}" class="add-user-button">
+            + Add New User
+        </a>
+    </div>
+</div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+            {% for message in messages %}
+                <div class="users-flash">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <div class="users-table-wrapper">
+
+            <table class="users-table">
+
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Username</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Account Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for user in users %}
+                    <tr>
+
+                        <td class="user-id">
+                            #{{ user[0] }}
+                        </td>
+
+                        <td>
+                            <span class="user-name">
+                                {{ user[1] }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ user[2] }}
+                        </td>
+
+                        <td class="user-email">
+                            {{ user[3] }}
+                        </td>
+
+                        <td>
+                            <span class="role-badge">
+                                {{ user[4] }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {% if user[5] %}
+                                <span class="account-status status-active">
+                                    Active
+                                </span>
+                            {% else %}
+                                <span class="account-status status-inactive">
+                                    Inactive
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if user[0] != session["user_id"] %}
+
+                                <form
+    class="user-action-form"
+    method="POST"
+    action="{{ url_for('toggle_user', user_id=user[0]) }}"
+>
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    {% if user[5] %}
+        <button
+            type="submit"
+            class="user-action-button deactivate-button"
+            onclick="return confirm('Are you sure you want to deactivate this account?');"
+        >
+            Deactivate
+        </button>
+    {% else %}
+        <button
+            type="submit"
+            class="user-action-button activate-button"
+            onclick="return confirm('Are you sure you want to activate this account?');"
+        >
+            Activate
+        </button>
+    {% endif %}
+
+</form>
+
+                            {% else %}
+
+                                <span class="current-account">
+                                    Current Account
+                                </span>
+
+                            {% endif %}
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="users-empty">
+                            No registered users found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="users-footer">
+            <a class="users-back" href="{{ url_for('dashboard') }}">
+                ← Back to Dashboard
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

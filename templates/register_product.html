@@ -1,0 +1,458 @@
+
+{% extends "base.html" %}
+
+{% block title %}Register Product | DigiPass{% endblock %}
+
+{% block breadcrumb %}
+<span>Manufacturer</span>
+<span class="breadcrumb-separator">/</span>
+<span>Register Product</span>
+{% endblock %}
+
+{% block page_title %}Register a New Product{% endblock %}
+
+{% block page_subtitle %}
+Add a product to your company's Digital Product Passport inventory.
+{% endblock %}
+
+{% block content %}
+
+<style>
+.register-page {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.register-intro {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 24px;
+    margin-bottom: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+}
+
+.register-icon {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 15px;
+    background: rgba(91, 139, 101, 0.13);
+    font-size: 25px;
+}
+
+.register-intro h3 {
+    margin: 0 0 5px;
+    color: var(--heading);
+    font-size: 17px;
+}
+
+.register-intro p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.register-card {
+    padding: 30px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(30, 60, 40, 0.04);
+}
+
+.form-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.form-section-heading span {
+    font-size: 20px;
+}
+
+.form-section-heading h3 {
+    margin: 0;
+    color: var(--heading);
+    font-size: 16px;
+}
+
+.form-section-heading p {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.product-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 21px;
+}
+
+.form-group {
+    min-width: 0;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--heading);
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.required-star {
+    color: #bd715b;
+}
+
+.form-group input {
+    width: 100%;
+    min-height: 45px;
+    padding: 11px 13px;
+    color: var(--text);
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    font-family: inherit;
+    font-size: 13px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #6b9b75;
+    box-shadow: 0 0 0 3px rgba(107, 155, 117, 0.13);
+}
+
+.form-group input::placeholder {
+    color: var(--muted);
+    opacity: 0.75;
+}
+
+.field-hint {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.form-divider {
+    height: 1px;
+    margin: 28px 0 23px;
+    background: var(--border);
+}
+
+.form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.form-note {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.form-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cancel-btn,
+.submit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 43px;
+    padding: 0 19px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 650;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.cancel-btn {
+    color: var(--text);
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+}
+
+.cancel-btn:hover {
+    border-color: #83a68a;
+}
+
+.submit-btn {
+    color: white;
+    background: #326b4b;
+    border: 1px solid #326b4b;
+}
+
+.submit-btn:hover {
+    background: #24563a;
+    transform: translateY(-1px);
+}
+
+.flash-messages {
+    margin-bottom: 20px;
+}
+
+.flash-message {
+    padding: 12px 15px;
+    margin-bottom: 9px;
+    color: var(--text);
+    background: rgba(190, 143, 92, 0.12);
+    border: 1px solid rgba(190, 143, 92, 0.3);
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+@media (max-width: 650px) {
+    .register-card {
+        padding: 21px 17px;
+    }
+
+    .product-form-grid {
+        grid-template-columns: 1fr;
+        gap: 17px;
+    }
+
+    .form-group.full-width {
+        grid-column: auto;
+    }
+
+    .form-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .form-buttons {
+        width: 100%;
+    }
+
+    .form-buttons a,
+    .form-buttons button {
+        flex: 1;
+    }
+}
+</style>
+
+<div class="register-page">
+
+    <div class="register-intro">
+        <div class="register-icon">🌱</div>
+        <div>
+            <h3>Give your product a digital identity</h3>
+            <p>
+                Register your product to begin building its digital passport,
+                tracking its lifecycle, materials, ownership and sustainability journey.
+            </p>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="register-card">
+
+        <div class="form-section-heading">
+            <span>📦</span>
+            <div>
+                <h3>Product Information</h3>
+                <p>Enter the basic details of the product you want to register.</p>
+            </div>
+        </div>
+
+<form method="POST" onsubmit="return validateProductForm()">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="product-form-grid">
+
+                <div class="form-group">
+                    <label>
+                        Product ID <span class="required-star">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        name="product_id"
+                        placeholder="Example: DPP016"
+                        required
+                    >
+                    <span class="field-hint">
+                        Enter a unique identifier for this product.
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Product Name <span class="required-star">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        name="product_name"
+                        placeholder="Example: EcoSmart Tablet"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Product Type <span class="required-star">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        name="product_type"
+                        placeholder="Example: Laptop, Smartphone"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Model Number <span class="required-star">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        name="model_number"
+                        placeholder="Example: EST-2026"
+                        required
+                    >
+                </div>
+
+            </div>
+
+            <div class="form-divider"></div>
+
+            <div class="form-section-heading">
+                <span>📅</span>
+                <div>
+                    <h3>Product Timeline</h3>
+                    <p>Specify the production and warranty dates.</p>
+                </div>
+            </div>
+
+            <div class="product-form-grid">
+
+                <div class="form-group">
+                    <label>
+                        Production Date <span class="required-star">*</span>
+                    </label>
+                    <input
+                        type="date"
+                        name="production_date"
+                        required
+                    >
+                    <span class="field-hint">
+                        When was this product manufactured?
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Warranty End Date <span class="required-star">*</span>
+                    </label>
+                    <input
+                        type="date"
+                        name="warranty_end_date"
+                        required
+                    >
+                    <span class="field-hint">
+                        When does the product warranty expire?
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="form-divider"></div>
+
+            <div class="form-actions">
+
+                <span class="form-note">
+                    * All fields are mandatory.
+                </span>
+
+                <div class="form-buttons">
+                    <a
+                        href="{{ url_for('manufacturer_products') }}"
+                        class="cancel-btn"
+                    >
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="submit-btn">
+                        Register Product →
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+<script>
+function validateProductForm() {
+
+    const productId = document.querySelector(
+        '[name="product_id"]'
+    ).value.trim();
+
+    const productName = document.querySelector(
+        '[name="product_name"]'
+    ).value.trim();
+
+    const modelNumber = document.querySelector(
+        '[name="model_number"]'
+    ).value.trim();
+
+    const productionDate = document.querySelector(
+        '[name="production_date"]'
+    ).value;
+
+    const warrantyDate = document.querySelector(
+        '[name="warranty_end_date"]'
+    ).value;
+
+    if (!productId || !productName || !modelNumber ||
+        !productionDate || !warrantyDate) {
+
+        alert("Please fill in all required product details.");
+        return false;
+    }
+
+    if (warrantyDate < productionDate) {
+        alert("Warranty end date cannot be before production date.");
+        return false;
+    }
+
+    return true;
+}
+</script>
+
+{% endblock %}

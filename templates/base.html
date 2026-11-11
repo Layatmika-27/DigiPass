@@ -1,0 +1,507 @@
+
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Digital Product Passport{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+
+<div class="app-shell">
+
+    <!-- MOBILE SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay"
+         id="sidebarOverlay"
+         onclick="closeSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-mark">D</div>
+
+            <div class="brand-text">
+                <span class="brand-name">DigiPass</span>
+                <span class="brand-caption">PRODUCT PASSPORT</span>
+            </div>
+
+            <button class="sidebar-close"
+                    onclick="closeSidebar()"
+                    aria-label="Close navigation">
+                ×
+            </button>
+
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <div class="sidebar-section-label">WORKSPACE</div>
+
+        <nav class="sidebar-nav">
+
+            <!-- OVERVIEW -->
+            <a href="{{ url_for('dashboard') }}"
+               class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+
+                <span class="nav-icon">⌂</span>
+                <span>Overview</span>
+
+            </a>
+
+
+            <!-- ADMIN -->
+            {% if session.get('role') == 'Admin' %}
+
+                <div class="nav-group-label">ADMINISTRATION</div>
+
+                <a href="{{ url_for('admin_users') }}"
+                   class="nav-link {% if request.endpoint == 'admin_users' %}active{% endif %}">
+
+                    <span class="nav-icon">♙</span>
+                    <span>User Management</span>
+
+                </a>
+
+                <a href="{{ url_for('admin_analytics') }}"
+                   class="nav-link {% if request.endpoint == 'admin_analytics' %}active{% endif %}">
+
+                    <span class="nav-icon">▥</span>
+                    <span>Analytics</span>
+
+                </a>
+
+                <a href="{{ url_for('audit_logs') }}"
+                   class="nav-link {% if request.endpoint == 'audit_logs' %}active{% endif %}">
+
+                    <span class="nav-icon">◷</span>
+                    <span>Audit Logs</span>
+
+                </a>
+
+            {% endif %}
+
+
+            <!-- MANUFACTURER -->
+            {% if session.get('role') == 'Manufacturer' %}
+
+                <div class="nav-group-label">MANUFACTURING</div>
+
+                <a href="{{ url_for('manufacturer_products') }}"
+                   class="nav-link {% if request.endpoint == 'manufacturer_products' %}active{% endif %}">
+
+                    <span class="nav-icon">▦</span>
+                    <span>My Products</span>
+
+                </a>
+
+                <a href="{{ url_for('register_product') }}"
+                   class="nav-link {% if request.endpoint == 'register_product' %}active{% endif %}">
+
+                    <span class="nav-icon">＋</span>
+                    <span>Register Product</span>
+
+                </a>
+
+                <a href="{{ url_for('add_component') }}"
+                   class="nav-link {% if request.endpoint == 'add_component' %}active{% endif %}">
+
+                    <span class="nav-icon">◈</span>
+                    <span>Components</span>
+
+                </a>
+
+                <a href="{{ url_for('add_lifecycle_event') }}"
+                   class="nav-link {% if request.endpoint == 'add_lifecycle_event' %}active{% endif %}">
+
+                    <span class="nav-icon">⟳</span>
+                    <span>Lifecycle Events</span>
+
+                </a>
+
+                <a href="{{ url_for('add_ownership') }}"
+                   class="nav-link {% if request.endpoint == 'add_ownership' %}active{% endif %}">
+
+                    <span class="nav-icon">♧</span>
+                    <span>Ownership</span>
+
+                </a>
+
+            {% endif %}
+
+
+            <!-- SERVICE CENTER -->
+            {% if session.get('role') in ['Admin', 'Service Center'] %}
+
+                <div class="nav-group-label">SERVICE</div>
+
+                <a href="{{ url_for('add_maintenance') }}"
+                   class="nav-link {% if request.endpoint == 'add_maintenance' %}active{% endif %}">
+
+                    <span class="nav-icon">⚙</span>
+                    <span>Maintenance</span>
+
+                </a>
+
+            {% endif %}
+
+
+            <!-- RECYCLER -->
+            {% if session.get('role') in ['Admin', 'Recycler'] %}
+
+                <div class="nav-group-label">SUSTAINABILITY</div>
+
+                <a href="{{ url_for('add_recycling') }}"
+                   class="nav-link {% if request.endpoint == 'add_recycling' %}active{% endif %}">
+
+                    <span class="nav-icon">♻</span>
+                    <span>Recycling</span>
+
+                </a>
+
+            {% endif %}
+
+
+            <!-- PRODUCT SEARCH -->
+            <div class="nav-group-label">PRODUCT PASSPORT</div>
+
+            <a href="{{ url_for('search_product') }}"
+               class="nav-link {% if request.endpoint == 'search_product' %}active{% endif %}">
+
+                <span class="nav-icon">⌕</span>
+                <span>Search Products</span>
+
+            </a>
+
+        </nav>
+
+
+        <!-- SIDEBAR BOTTOM -->
+        <div class="sidebar-bottom">
+
+            <div class="sidebar-divider"></div>
+
+            <div class="sidebar-user">
+
+                <div class="avatar">
+                    {{ session.get('full_name', 'U')[0]|upper }}
+                </div>
+
+                <div class="sidebar-user-info">
+
+                    <strong>
+                        {{ session.get('full_name', 'User') }}
+                    </strong>
+
+                    <span>
+                        {{ session.get('role', 'Member') }}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- SECURE LOGOUT -->
+            <form action="{{ url_for('logout') }}"
+                  method="POST"
+                  style="margin: 0;">
+
+                <input type="hidden"
+                       name="csrf_token"
+                       value="{{ csrf_token() }}">
+
+                <button type="submit"
+                        class="nav-link logout-link"
+                        style="width: 100%; border: none; cursor: pointer; text-align: left;">
+
+                    <span class="nav-icon">↪</span>
+                    <span>Sign out</span>
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN AREA -->
+    <main class="main-area">
+
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button class="menu-toggle"
+                        onclick="openSidebar()"
+                        aria-label="Open navigation">
+                    ☰
+                </button>
+
+                <div class="breadcrumb">
+
+                    <span>Workspace</span>
+
+                    <span class="breadcrumb-separator">/</span>
+
+                    <strong>
+                        {% block breadcrumb %}Overview{% endblock %}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="topbar-right">
+
+                <div class="workspace-indicator">
+
+                    <span class="workspace-indicator-dot"></span>
+                    <span>DigiPass Workspace</span>
+
+                </div>
+
+
+                <!-- THEME TOGGLE -->
+                <button class="theme-toggle"
+                        id="themeToggle"
+                        type="button"
+                        aria-label="Toggle theme"
+                        title="Switch theme">
+
+                    <span id="themeIcon">☾</span>
+
+                </button>
+
+
+                <!-- PROFILE -->
+                <div class="topbar-profile">
+
+                    <div class="topbar-profile-info">
+
+                        <strong>
+                            {{ session.get('full_name', 'User') }}
+                        </strong>
+
+                        <span>
+                            {{ session.get('role', 'Member') }}
+                        </span>
+
+                    </div>
+
+                    <div class="topbar-avatar">
+                        {{ session.get('full_name', 'U')[0]|upper }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE CONTENT -->
+        <div class="page-container">
+
+
+            <!-- FLASH MESSAGES -->
+            <div class="flash-container">
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+
+                    {% if messages %}
+
+                        {% for category, message in messages %}
+
+                            <div class="flash-message flash-{{ category }}">
+
+                                <span>{{ message }}</span>
+
+                                <button type="button"
+                                        class="flash-close"
+                                        onclick="this.parentElement.remove()">
+                                    ×
+                                </button>
+
+                            </div>
+
+                        {% endfor %}
+
+                    {% endif %}
+
+                {% endwith %}
+
+            </div>
+
+
+            <!-- PAGE HEADING -->
+            <section class="page-heading">
+
+                <div>
+
+                    <div class="eyebrow">
+                        DIGITAL PRODUCT PASSPORT PLATFORM
+                    </div>
+
+                    <h1>
+                        {% block page_title %}Welcome back{% endblock %}
+                    </h1>
+
+                    <p class="page-subtitle">
+
+                        {% block page_subtitle %}
+                            Manage products, track lifecycle data and explore sustainability.
+                        {% endblock %}
+
+                    </p>
+
+                </div>
+
+                <div class="page-heading-actions">
+                    {% block page_actions %}{% endblock %}
+                </div>
+
+            </section>
+
+
+            <!-- INDIVIDUAL PAGE CONTENT -->
+            <div class="page-content">
+
+                {% block content %}{% endblock %}
+
+            </div>
+
+
+            <!-- FOOTER -->
+            <footer class="footer">
+
+                <span>© 2026 DigiPass</span>
+
+                <span>
+                    Building a more transparent, sustainable future.
+                </span>
+
+            </footer>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- JAVASCRIPT -->
+<script>
+
+    // THEME MANAGEMENT
+
+    const htmlElement = document.documentElement;
+
+    const themeToggle =
+        document.getElementById("themeToggle");
+
+    const themeIcon =
+        document.getElementById("themeIcon");
+
+
+    function applyTheme(theme) {
+
+        htmlElement.setAttribute("data-theme", theme);
+
+        if (themeIcon) {
+            themeIcon.textContent =
+                theme === "dark" ? "☀" : "☾";
+        }
+
+        localStorage.setItem("dpp-theme", theme);
+
+    }
+
+
+    const savedTheme =
+        localStorage.getItem("dpp-theme") || "light";
+
+    applyTheme(savedTheme);
+
+
+    if (themeToggle) {
+
+        themeToggle.addEventListener("click", function () {
+
+            const currentTheme =
+                htmlElement.getAttribute("data-theme");
+
+            applyTheme(
+                currentTheme === "light" ? "dark" : "light"
+            );
+
+        });
+
+    }
+
+
+    // RESPONSIVE SIDEBAR
+
+    function openSidebar() {
+
+        const sidebar =
+            document.getElementById("sidebar");
+
+        const overlay =
+            document.getElementById("sidebarOverlay");
+
+        if (sidebar) {
+            sidebar.classList.add("sidebar-open");
+        }
+
+        if (overlay) {
+            overlay.classList.add("overlay-visible");
+        }
+
+    }
+
+
+    function closeSidebar() {
+
+        const sidebar =
+            document.getElementById("sidebar");
+
+        const overlay =
+            document.getElementById("sidebarOverlay");
+
+        if (sidebar) {
+            sidebar.classList.remove("sidebar-open");
+        }
+
+        if (overlay) {
+            overlay.classList.remove("overlay-visible");
+        }
+
+    }
+
+</script>
+
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>

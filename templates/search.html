@@ -1,0 +1,683 @@
+
+{% extends "base.html" %}
+
+{% block title %}Product Passport | DigiPass{% endblock %}
+
+{% block breadcrumb %}Product Passport / Search{% endblock %}
+
+{% block page_title %}Explore a product passport{% endblock %}
+
+{% block page_subtitle %}
+Discover product identity, materials, lifecycle history and sustainability information in one place.
+{% endblock %}
+
+{% block content %}
+
+<!-- SEARCH PANEL -->
+<section class="passport-search-panel">
+
+    <div class="passport-search-heading">
+        <span class="passport-eyebrow">DIGITAL PRODUCT LOOKUP</span>
+        <h2>Every product has a story.</h2>
+        <p>Enter a product ID to uncover its complete journey.</p>
+    </div>
+
+    <form method="POST" class="passport-search-form">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="passport-search-input-wrap">
+        <span class="passport-search-icon">⌕</span>
+        <input
+            type="text"
+            name="product_id"
+            value="{{ request.form.get('product_id', '') }}"
+            placeholder="Enter Product ID — e.g. DPP001"
+            required
+        >
+    </div>
+
+    <button type="submit" class="passport-search-button">
+        Search Passport <span>→</span>
+    </button>
+</form>
+
+    <div class="passport-search-hint">
+        <span>✦</span> Try searching for a product such as DPP001 or DPP016.
+    </div>
+
+</section>
+
+
+{% if product %}
+
+<!-- PRODUCT HERO -->
+<section class="passport-product-hero">
+
+    <div class="passport-product-hero-main">
+
+        <span class="passport-eyebrow">VERIFIED PRODUCT RECORD</span>
+
+        <div class="passport-product-title-row">
+            <div>
+                <h2>{{ product.product_name }}</h2>
+                <p class="passport-product-id">
+                    PRODUCT ID <strong>{{ product.product_id }}</strong>
+                </p>
+            </div>
+
+            <span class="passport-status">
+                <span class="status-dot"></span>
+                {{ product.status }}
+            </span>
+        </div>
+
+        <div class="passport-product-meta">
+
+            <div>
+                <span>PRODUCT TYPE</span>
+                <strong>{{ product.product_type }}</strong>
+            </div>
+
+            <div>
+                <span>MODEL NUMBER</span>
+                <strong>{{ product.model_number }}</strong>
+            </div>
+
+            <div>
+                <span>MANUFACTURER</span>
+                <strong>{{ product.manufacturer_name }}</strong>
+            </div>
+
+            <div>
+                <span>MANUFACTURER LOCATION</span>
+                <strong>{{ product.manufacturer_location }}</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="passport-product-hero-action">
+
+        <div class="passport-hero-decoration">♻</div>
+
+        <span class="passport-eyebrow">PRODUCT IDENTITY</span>
+
+        <p>
+            A connected record of this product's materials,
+            ownership, maintenance and end-of-life journey.
+        </p>
+
+        <a
+            href="{{ url_for('generate_qr', product_id=product.product_id) }}"
+            class="passport-qr-button"
+        >
+            Generate QR Code <span>↗</span>
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- PRODUCT METRICS -->
+<section class="passport-metrics-grid">
+
+    <article class="passport-metric-card">
+        <span class="passport-metric-icon">◈</span>
+        <span class="passport-metric-label">Total Material Quantity</span>
+        <strong>{{ product.total_material_quantity }}</strong>
+        <small>Combined component quantity</small>
+    </article>
+
+    <article class="passport-metric-card">
+        <span class="passport-metric-icon">⟳</span>
+        <span class="passport-metric-label">Lifecycle Events</span>
+        <strong>{{ product.lifecycle_event_count }}</strong>
+        <small>Recorded product activities</small>
+    </article>
+
+    <article class="passport-metric-card">
+        <span class="passport-metric-icon">⚙</span>
+        <span class="passport-metric-label">Maintenance Records</span>
+        <strong>{{ product.maintenance_count }}</strong>
+        <small>Total servicing activities</small>
+    </article>
+
+    <article class="passport-metric-card">
+        <span class="passport-metric-icon">♻</span>
+        <span class="passport-metric-label">Recovery Percentage</span>
+        <strong>{{ product.average_recovery_percentage }}%</strong>
+        <small>Average material recovery</small>
+    </article>
+
+</section>
+
+
+<!-- 01. PRODUCT OVERVIEW -->
+<section class="passport-section">
+
+    <div class="passport-section-heading">
+        <div>
+            <span class="passport-eyebrow">01 / PRODUCT DETAILS</span>
+            <h2>Product overview</h2>
+            <p>Essential information and current product ownership.</p>
+        </div>
+    </div>
+
+    <div class="passport-information-grid">
+
+        <article class="passport-info-card">
+            <span>Production Date</span>
+            <strong>{{ product.production_date }}</strong>
+        </article>
+
+        <article class="passport-info-card">
+            <span>Warranty End Date</span>
+            <strong>{{ product.warranty_end_date }}</strong>
+        </article>
+
+        <article class="passport-info-card">
+            <span>Last Lifecycle Event</span>
+            <strong>{{ product.last_lifecycle_event or "Not available" }}</strong>
+        </article>
+
+        <article class="passport-info-card">
+            <span>Current Owner</span>
+            <strong>{{ product.owner_name or "Not available" }}</strong>
+        </article>
+
+        <article class="passport-info-card">
+            <span>Owner Type</span>
+            <strong>{{ product.owner_type or "Not available" }}</strong>
+        </article>
+
+        <article class="passport-info-card">
+            <span>Total Maintenance Cost</span>
+            <strong>₹{{ product.total_maintenance_cost }}</strong>
+        </article>
+
+        <article class="passport-info-card">
+            <span>Recycling Date</span>
+            <strong>{{ product.recycling_date or "Not available" }}</strong>
+        </article>
+
+        <article class="passport-info-card">
+            <span>Total Recovered Quantity</span>
+            <strong>{{ product.total_recovered_quantity }}</strong>
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- 02. MATERIALS AND COMPONENTS -->
+<section class="passport-section">
+
+    <div class="passport-section-heading">
+        <div>
+            <span class="passport-eyebrow">02 / MATERIAL TRANSPARENCY</span>
+            <h2>Materials & components</h2>
+            <p>Understand what this product is made of and where its materials originate.</p>
+        </div>
+
+        <span class="passport-count-badge">
+            {{ materials|length }} components
+        </span>
+    </div>
+
+    {% if materials %}
+
+    <div class="passport-component-grid">
+
+        {% for item in materials %}
+
+        <article class="passport-component-card">
+
+            <div class="passport-component-top">
+                <span class="passport-component-icon">◈</span>
+
+                {% if item.recyclable %}
+                    <span class="passport-recyclable">Recyclable</span>
+                {% else %}
+                    <span class="passport-not-recyclable">Non-recyclable</span>
+                {% endif %}
+            </div>
+
+            <h3>{{ item.component_name }}</h3>
+
+            <p class="passport-material-name">
+                {{ item.material_name }}
+            </p>
+
+            <div class="passport-component-details">
+
+                <div>
+                    <span>Category</span>
+                    <strong>{{ item.material_category }}</strong>
+                </div>
+
+                <div>
+                    <span>Quantity</span>
+                    <strong>{{ item.quantity }} {{ item.unit }}</strong>
+                </div>
+
+                <div>
+                    <span>Material Origin</span>
+                    <strong>{{ item.origin }}</strong>
+                </div>
+
+                <div>
+                    <span>Carbon Impact</span>
+                    <strong>{{ item.carbon_impact_kg }} kg CO₂</strong>
+                </div>
+
+            </div>
+
+            <div class="passport-recovery-row">
+                <div>
+                    <span>Recyclability</span>
+                    <strong>{{ item.recyclability_percentage }}%</strong>
+                </div>
+
+                <div class="passport-progress-track">
+                    <div
+                        class="passport-progress-fill"
+                        style="width: {{ item.recyclability_percentage }}%;"
+                    ></div>
+                </div>
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="passport-empty-state">
+        <span>◈</span>
+        <h3>No component records yet</h3>
+        <p>Material and component information has not been added for this product.</p>
+    </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- 03. LIFECYCLE TIMELINE -->
+<section class="passport-section">
+
+    <div class="passport-section-heading">
+        <div>
+            <span class="passport-eyebrow">03 / PRODUCT JOURNEY</span>
+            <h2>Lifecycle timeline</h2>
+            <p>Follow the product's journey from manufacturing to its latest recorded event.</p>
+        </div>
+
+        <span class="passport-count-badge">
+            {{ lifecycle|length }} events
+        </span>
+    </div>
+
+    {% if lifecycle %}
+
+    <div class="passport-timeline">
+
+        {% for event in lifecycle %}
+
+        <article class="passport-timeline-item">
+
+            <div class="passport-timeline-marker">
+
+                {% if event.event_type == "Manufacturing" %}
+                    🏭
+                {% elif event.event_type == "Distribution" %}
+                    🚚
+                {% elif event.event_type == "Sale" %}
+                    🛒
+                {% elif event.event_type == "Maintenance" %}
+                    🔧
+                {% elif event.event_type == "Repair" %}
+                    🛠️
+                {% elif event.event_type == "Ownership Transfer" %}
+                    🤝
+                {% elif event.event_type == "Refurbishment" %}
+                    ♻️
+                {% elif event.event_type == "Recycling" %}
+                    🌱
+                {% else %}
+                    📦
+                {% endif %}
+
+            </div>
+
+            <div class="passport-timeline-content">
+
+                <div class="passport-timeline-header">
+                    <h3>{{ event.event_type }}</h3>
+                    <span>{{ event.event_date }}</span>
+                </div>
+
+                <p class="passport-timeline-location">
+                    <span>⌖</span>
+                    {{ event.location or "Location not specified" }}
+                </p>
+
+                <p>
+                    {{ event.description or "No description available." }}
+                </p>
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="passport-empty-state">
+        <span>⟳</span>
+        <h3>No lifecycle events recorded</h3>
+        <p>This product does not have any recorded lifecycle activities yet.</p>
+    </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- 04. OWNERSHIP HISTORY -->
+<section class="passport-section">
+
+    <div class="passport-section-heading">
+        <div>
+            <span class="passport-eyebrow">04 / OWNERSHIP RECORD</span>
+            <h2>Ownership history</h2>
+            <p>Explore the recorded ownership journey of this product.</p>
+        </div>
+
+        <span class="passport-count-badge">
+            {{ ownership|length }} records
+        </span>
+    </div>
+
+    {% if ownership %}
+
+    <div class="passport-record-grid">
+
+        {% for owner in ownership %}
+
+        <article class="passport-record-card">
+
+            <div class="passport-record-card-top">
+
+                <span class="passport-record-icon">♙</span>
+
+                {% if owner.end_date %}
+                    <span class="passport-record-tag">Previous Owner</span>
+                {% else %}
+                    <span class="passport-record-tag current">Current Owner</span>
+                {% endif %}
+
+            </div>
+
+            <h3>{{ owner.owner_name }}</h3>
+
+            <p class="passport-record-subtitle">
+                {{ owner.owner_type }}
+            </p>
+
+            <div class="passport-record-details">
+
+                <div class="passport-detail-row">
+                    <span>Start Date</span>
+                    <strong>{{ owner.start_date }}</strong>
+                </div>
+
+                <div class="passport-detail-row">
+                    <span>End Date</span>
+                    <strong>{{ owner.end_date or "Current Owner" }}</strong>
+                </div>
+
+                <div class="passport-detail-row">
+                    <span>Transfer Reason</span>
+                    <strong>{{ owner.transfer_reason or "Not specified" }}</strong>
+                </div>
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="passport-empty-state">
+        <span>♙</span>
+        <h3>No ownership records</h3>
+        <p>Ownership information has not been recorded yet.</p>
+    </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- 05. MAINTENANCE HISTORY -->
+<section class="passport-section">
+
+    <div class="passport-section-heading">
+        <div>
+            <span class="passport-eyebrow">05 / PRODUCT CARE</span>
+            <h2>Maintenance & repair</h2>
+            <p>Review servicing activities and maintenance history.</p>
+        </div>
+
+        <span class="passport-count-badge">
+            {{ maintenance|length }} records
+        </span>
+    </div>
+
+    {% if maintenance %}
+
+    <div class="passport-record-grid">
+
+        {% for item in maintenance %}
+
+        <article class="passport-record-card maintenance-card">
+
+            <div class="passport-record-card-top">
+                <span class="passport-record-icon maintenance-icon">⚙</span>
+                <span class="passport-record-tag">Service Record</span>
+            </div>
+
+            <h3>{{ item.maintenance_type }}</h3>
+
+            <p class="passport-record-subtitle">
+                {{ item.maintenance_date }}
+            </p>
+
+            <p class="passport-record-description">
+                {{ item.description or "No description available." }}
+            </p>
+
+            <div class="passport-record-details">
+
+                <div class="passport-detail-row">
+                    <span>Technician</span>
+                    <strong>{{ item.technician_name or "Not specified" }}</strong>
+                </div>
+
+                <div class="passport-detail-row">
+                    <span>Service Center</span>
+                    <strong>{{ item.service_center or "Not specified" }}</strong>
+                </div>
+
+                <div class="passport-detail-row">
+                    <span>Maintenance Cost</span>
+                    <strong>₹{{ item.cost }}</strong>
+                </div>
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="passport-empty-state">
+        <span>⚙</span>
+        <h3>No maintenance records</h3>
+        <p>No servicing or repair activities have been recorded for this product.</p>
+    </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- 06. RECYCLING AND SUSTAINABILITY -->
+<section class="passport-section">
+
+    <div class="passport-section-heading">
+        <div>
+            <span class="passport-eyebrow">06 / CIRCULAR SUSTAINABILITY</span>
+            <h2>Recycling & recovery</h2>
+            <p>Explore recovered materials and end-of-life processing information.</p>
+        </div>
+
+        <span class="passport-count-badge">
+            {{ recycling|length }} records
+        </span>
+    </div>
+
+    {% if recycling %}
+
+    <div class="passport-record-grid">
+
+        {% for item in recycling %}
+
+        <article class="passport-record-card recycling-card">
+
+            <div class="passport-record-card-top">
+
+                <span class="passport-record-icon recycling-icon">♻</span>
+
+                <span class="passport-record-tag current">
+                    Recovery Record
+                </span>
+
+            </div>
+
+            <h3>{{ item.recovered_material }}</h3>
+
+            <p class="passport-record-subtitle">
+                {{ item.recycling_method }}
+            </p>
+
+            <div class="passport-record-details">
+
+                <div class="passport-detail-row">
+                    <span>Recycling Date</span>
+                    <strong>{{ item.recycling_date }}</strong>
+                </div>
+
+                <div class="passport-detail-row">
+                    <span>Facility</span>
+                    <strong>{{ item.recycling_facility }}</strong>
+                </div>
+
+                <div class="passport-detail-row">
+                    <span>Recovered Quantity</span>
+                    <strong>{{ item.recovered_quantity }}</strong>
+                </div>
+
+                <div class="passport-detail-row">
+                    <span>Recovery Percentage</span>
+                    <strong>{{ item.recovery_percentage }}%</strong>
+                </div>
+
+            </div>
+
+            <div class="passport-recovery-row">
+
+                <div class="passport-progress-track">
+                    <div
+                        class="passport-progress-fill"
+                        style="width: {{ item.recovery_percentage }}%;"
+                    ></div>
+                </div>
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="passport-empty-state">
+        <span>♻</span>
+        <h3>No recycling records</h3>
+        <p>Recycling and material recovery information has not been recorded yet.</p>
+    </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- BOTTOM ACTION -->
+<div class="passport-bottom-action">
+
+    <div>
+        <h3>That's the product story.</h3>
+        <p>Explore another passport or return to your workspace.</p>
+    </div>
+
+    <a href="{{ url_for('dashboard') }}" class="passport-back-button">
+        Back to Workspace →
+    </a>
+
+</div>
+
+
+{% elif searched %}
+
+<!-- NO SEARCH RESULTS -->
+<section class="passport-no-results">
+
+    <div class="passport-no-results-icon">⌕</div>
+
+    <span class="passport-eyebrow">NO MATCH FOUND</span>
+
+    <h2>We couldn't find that product.</h2>
+
+    <p>
+        Check the Product ID and try again.
+        Make sure you've entered the correct identifier.
+    </p>
+
+    <a href="{{ url_for('dashboard') }}" class="passport-back-button">
+        Back to Workspace →
+    </a>
+
+</section>
+
+{% endif %}
+
+{% endblock %}

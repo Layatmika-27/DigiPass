@@ -1,0 +1,288 @@
+
+{% extends "base.html" %}
+
+{% block title %}Add User | DigiPass{% endblock %}
+
+{% block breadcrumb %}
+<span>Administration</span>
+<span class="breadcrumb-separator">/</span>
+<span>User Management</span>
+<span class="breadcrumb-separator">/</span>
+<span>Add User</span>
+{% endblock %}
+
+{% block page_title %}Add New User{% endblock %}
+
+{% block page_subtitle %}
+Create an account and assign the appropriate system role.
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .add-user-container {
+        max-width: 760px;
+        margin: 0 auto;
+    }
+
+    .add-user-card {
+        padding: 28px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+    }
+
+    .add-user-heading {
+        margin-bottom: 25px;
+    }
+
+    .add-user-heading h3 {
+        margin: 0 0 7px;
+        color: var(--heading);
+        font-size: 17px;
+    }
+
+    .add-user-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .user-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .user-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .user-form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .user-form-group label {
+        color: var(--heading);
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .user-form-group input,
+    .user-form-group select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 13px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        outline: none;
+        background: var(--input-bg);
+        color: var(--text);
+        font-size: 13px;
+    }
+
+    .user-form-group input:focus,
+    .user-form-group select:focus {
+        border-color: #609574;
+        box-shadow: 0 0 0 3px rgba(76, 135, 91, 0.10);
+    }
+
+    .user-form-group small {
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    .user-form-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 28px;
+        padding-top: 22px;
+        border-top: 1px solid var(--border);
+    }
+
+    .create-user-button {
+        padding: 11px 19px;
+        border: none;
+        border-radius: 10px;
+        background: #4c875b;
+        color: white;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .create-user-button:hover {
+        background: #376b46;
+    }
+
+    .cancel-user-button {
+        padding: 11px 17px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: var(--text);
+        background: var(--input-bg);
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .add-user-flash {
+        margin-bottom: 20px;
+        padding: 12px 15px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--input-bg);
+        color: var(--text);
+        font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+        .user-form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .add-user-card {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="add-user-container">
+
+    <div class="add-user-card">
+
+        <div class="add-user-heading">
+            <h3>Account Information</h3>
+            <p>Enter the new user's details below.</p>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% for message in messages %}
+                <div class="add-user-flash">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+<form method="POST" action="{{ url_for('add_user') }}">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="user-form-grid">
+
+                <div class="user-form-group">
+                    <label for="username">Username *</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="e.g. customer02"
+                        value="{{ request.form.get('username', '') }}"
+                        required
+                    >
+                </div>
+
+                <div class="user-form-group">
+                    <label for="full_name">Full Name *</label>
+                    <input
+                        type="text"
+                        id="full_name"
+                        name="full_name"
+                        placeholder="Enter full name"
+                        value="{{ request.form.get('full_name', '') }}"
+                        required
+                    >
+                </div>
+
+                <div class="user-form-group full-width">
+                    <label for="email">Email Address *</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="user@example.com"
+                        value="{{ request.form.get('email', '') }}"
+                        required
+                    >
+                </div>
+
+                <div class="user-form-group">
+                    <label for="password">Password *</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Minimum 8 characters"
+                        minlength="8"
+                        required
+                    >
+                    <small>Password must contain at least 8 characters.</small>
+                </div>
+
+                <div class="user-form-group">
+                    <label for="role_id">User Role *</label>
+                    <select id="role_id" name="role_id" required>
+                        <option value="">Select a role</option>
+
+                        {% for role in roles %}
+                            <option
+                                value="{{ role[0] }}"
+                                {% if request.form.get('role_id', '')|string == role[0]|string %}selected{% endif %}
+                            >
+                                {{ role[1] }}
+                            </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div class="user-form-group full-width">
+                    <label for="manufacturer_id">
+                        Manufacturer Company
+                    </label>
+
+                    <select id="manufacturer_id" name="manufacturer_id">
+                        <option value="">Select manufacturer company</option>
+
+                        {% for manufacturer in manufacturers %}
+                            <option
+                                value="{{ manufacturer[0] }}"
+                                {% if request.form.get('manufacturer_id', '')|string == manufacturer[0]|string %}selected{% endif %}
+                            >
+                                {{ manufacturer[1] }}
+                            </option>
+                        {% endfor %}
+
+                    </select>
+
+                    <small>
+                        Required only when the selected role is Manufacturer.
+                    </small>
+                </div>
+
+            </div>
+
+            <div class="user-form-actions">
+
+                <button type="submit" class="create-user-button">
+                    Create User Account
+                </button>
+
+                <a
+                    href="{{ url_for('admin_users') }}"
+                    class="cancel-user-button"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

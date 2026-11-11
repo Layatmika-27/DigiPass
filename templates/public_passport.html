@@ -1,0 +1,1094 @@
+
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Digital Product Passport - {{ product.product_name }}</title>
+
+    <style>
+        :root {
+            --page-bg: #f3f7f2;
+            --surface: #ffffff;
+            --surface-soft: #edf4ed;
+            --primary: #286b50;
+            --primary-dark: #194b39;
+            --accent: #a9c6ae;
+            --heading: #20372c;
+            --text: #46554b;
+            --muted: #7a897e;
+            --border: #e1e9e1;
+            --shadow: 0 8px 28px rgba(32, 65, 45, 0.07);
+            --status-bg: #e3f3e7;
+            --status-text: #24633d;
+        }
+
+        [data-theme="dark"] {
+            --page-bg: #121c18;
+            --surface: #1d2a23;
+            --surface-soft: #26382d;
+            --primary: #8fc7a2;
+            --primary-dark: #b1d9bd;
+            --accent: #527e60;
+            --heading: #e6f1e8;
+            --text: #c4d2c7;
+            --muted: #9aab9e;
+            --border: #35473a;
+            --shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+            --status-bg: #294b35;
+            --status-text: #b5e2bf;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 32px 20px;
+            background: var(--page-bg);
+            color: var(--text);
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+            line-height: 1.6;
+            transition: background 0.25s, color 0.25s;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1120px;
+            margin: auto;
+        }
+
+        /* Top navigation */
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            color: var(--heading);
+            font-weight: 750;
+            letter-spacing: -0.3px;
+        }
+
+        .brand-icon {
+            display: grid;
+            place-items: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            background: var(--surface-soft);
+            font-size: 21px;
+        }
+
+        .brand small {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            padding: 9px 13px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 650;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        /* Hero */
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 38px;
+            border-radius: 22px;
+            background: linear-gradient(125deg, #163d32, #286b50 65%, #477d5c);
+            color: #ffffff;
+            box-shadow: var(--shadow);
+        }
+
+        .hero::after {
+            content: "♻";
+            position: absolute;
+            right: 35px;
+            top: 5px;
+            font-size: 150px;
+            opacity: 0.09;
+            transform: rotate(-15deg);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 720px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 6px 11px;
+            border: 1px solid rgba(255,255,255,0.24);
+            border-radius: 30px;
+            background: rgba(255,255,255,0.1);
+            color: #e4f3e7;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            margin: 17px 0 7px;
+            color: #ffffff;
+            font-size: clamp(27px, 4vw, 39px);
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        .hero-description {
+            margin: 0;
+            color: #d7e9dc;
+            font-size: 14px;
+        }
+
+        .hero-product {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .hero-product h2 {
+            margin: 0 0 5px;
+            color: #ffffff;
+            font-size: 23px;
+        }
+
+        .product-id {
+            color: #d5e8d9;
+            font-size: 13px;
+        }
+
+        /* General sections */
+
+        .section {
+            margin-top: 23px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            background: var(--surface);
+            box-shadow: var(--shadow);
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-number {
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: var(--surface-soft);
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            color: var(--heading);
+            font-size: 18px;
+            letter-spacing: -0.3px;
+        }
+
+        .section-heading p {
+            margin: 2px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* Product overview */
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 13px;
+        }
+
+        .info-card {
+            min-width: 0;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--page-bg);
+        }
+
+        .info-label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            display: block;
+            overflow-wrap: anywhere;
+            color: var(--heading);
+            font-size: 14px;
+            font-weight: 650;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 11px;
+            border-radius: 30px;
+            background: var(--status-bg);
+            color: var(--status-text);
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+
+/* Product lifecycle timeline */
+
+.timeline {
+    position: relative;
+    padding: 8px 5px 5px;
+}
+
+.timeline-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 17px;
+    padding-bottom: 27px;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-marker {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.timeline-marker::after {
+    content: "";
+    position: absolute;
+    top: 43px;
+    bottom: -27px;
+    width: 2px;
+    background: var(--border);
+}
+
+.timeline-item:last-child .timeline-marker::after {
+    display: none;
+}
+
+.timeline-icon {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 43px;
+    height: 43px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface-soft);
+    color: var(--primary);
+    font-size: 19px;
+}
+
+.timeline-card {
+    min-width: 0;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: var(--page-bg);
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.timeline-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.timeline-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.timeline-event-name {
+    color: var(--heading);
+    font-size: 14px;
+    font-weight: 750;
+}
+
+.timeline-date {
+    padding: 5px 9px;
+    border-radius: 20px;
+    background: var(--surface-soft);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.timeline-description {
+    margin: 0;
+    color: var(--text);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.timeline-location {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.timeline-count {
+    display: inline-block;
+    margin-bottom: 15px;
+    padding: 6px 11px;
+    border-radius: 20px;
+    background: var(--surface-soft);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 750;
+}
+
+@media (max-width: 450px) {
+    .timeline-item {
+        grid-template-columns: 38px minmax(0, 1fr);
+        gap: 11px;
+    }
+
+    .timeline-icon {
+        width: 37px;
+        height: 37px;
+        font-size: 16px;
+    }
+
+    .timeline-marker::after {
+        top: 37px;
+    }
+
+    .timeline-card {
+        padding: 13px;
+    }
+}
+
+        /* Tables */
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 650px;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 13px 15px;
+            background: var(--surface-soft);
+            color: var(--heading);
+            font-size: 11px;
+            font-weight: 750;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 13px 15px;
+            border-top: 1px solid var(--border);
+            color: var(--text);
+            font-size: 13px;
+            vertical-align: top;
+        }
+
+        tbody tr {
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: var(--page-bg);
+        }
+
+        .empty-state {
+            padding: 24px;
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            background: var(--page-bg);
+            color: var(--muted);
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .empty-icon {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 24px;
+        }
+
+        /* Footer */
+
+        .footer {
+            margin-top: 30px;
+            padding: 25px 15px 10px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer strong {
+            display: block;
+            color: var(--heading);
+            font-size: 14px;
+        }
+
+        .footer p {
+            margin: 5px 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .footer-tag {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: var(--surface-soft);
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 750px) {
+            body {
+                padding: 18px 13px;
+            }
+
+            .hero {
+                padding: 27px 22px;
+            }
+
+            .hero::after {
+                right: 8px;
+                font-size: 100px;
+            }
+
+            .section {
+                padding: 19px 15px;
+            }
+
+            .overview-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 450px) {
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 27px;
+            }
+
+            .top-actions {
+                width: 100%;
+            }
+        }
+
+        /* Print */
+
+        @media print {
+            body {
+                padding: 0;
+                background: #ffffff;
+                color: #222222;
+            }
+
+            .topbar,
+            .top-actions {
+                display: none !important;
+            }
+
+            .hero {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .section {
+                box-shadow: none;
+                break-inside: avoid;
+            }
+
+            .table-wrap {
+                overflow: visible;
+            }
+
+            table {
+                min-width: 0;
+                font-size: 10px;
+            }
+
+            th, td {
+                padding: 7px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Top navigation -->
+    <div class="topbar">
+
+        <div class="brand">
+            <div class="brand-icon">🌿</div>
+            <div>
+                DigiPass
+                <small>PRODUCT TRANSPARENCY PLATFORM</small>
+            </div>
+        </div>
+
+        
+<div class="top-actions">
+
+    <button class="action-btn" onclick="toggleTheme()">
+        ☾ / ☀ Theme
+    </button>
+
+    <button class="action-btn" onclick="window.print()">
+        ⎙ Print Passport
+    </button>
+
+    <a
+        href="{{ url_for('download_passport', product_id=product.product_id) }}"
+        class="action-btn"
+        style="text-decoration: none;"
+    >
+        ↓ Download PDF
+    </a>
+
+</div>
+
+
+    </div>
+
+
+    <!-- Hero banner -->
+    <header class="hero">
+
+        <div class="hero-content">
+
+            <span class="eyebrow">
+                ♻ Digital Product Passport
+            </span>
+
+            <h1>Know Your Product.<br>Understand Its Journey.</h1>
+
+            <p class="hero-description">
+                Explore product information, materials, ownership,
+                maintenance, and sustainability records in one place.
+            </p>
+
+            <div class="hero-product">
+                <h2>{{ product.product_name }}</h2>
+
+                <span class="product-id">
+                    Product ID: {{ product.product_id }}
+                </span>
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- 1. Product Overview -->
+    <section class="section">
+
+        <div class="section-heading">
+            <div class="section-number">01</div>
+
+            <div>
+                <h2>Product Overview</h2>
+                <p>Essential product and manufacturer information</p>
+            </div>
+        </div>
+
+        <div class="overview-grid">
+
+            <div class="info-card">
+                <span class="info-label">Product Type</span>
+                <span class="info-value">{{ product.product_type or "Not available" }}</span>
+            </div>
+
+            <div class="info-card">
+                <span class="info-label">Model Number</span>
+                <span class="info-value">{{ product.model_number or "Not available" }}</span>
+            </div>
+
+            <div class="info-card">
+                <span class="info-label">Manufacturer</span>
+                <span class="info-value">{{ product.manufacturer_name or "Not available" }}</span>
+            </div>
+
+            <div class="info-card">
+                <span class="info-label">Manufacturer Location</span>
+                <span class="info-value">{{ product.manufacturer_location or "Not available" }}</span>
+            </div>
+
+            <div class="info-card">
+                <span class="info-label">Production Date</span>
+                <span class="info-value">{{ product.production_date or "Not available" }}</span>
+            </div>
+
+            <div class="info-card">
+                <span class="info-label">Warranty End Date</span>
+                <span class="info-value">{{ product.warranty_end_date or "Not available" }}</span>
+            </div>
+
+            <div class="info-card">
+                <span class="info-label">Current Product Status</span>
+                <span class="info-value">
+                    <span class="status">{{ product.status }}</span>
+                </span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- 2. Materials -->
+    <section class="section">
+
+        <div class="section-heading">
+            <div class="section-number">02</div>
+
+            <div>
+                <h2>Materials & Components</h2>
+                <p>Composition, material origin, and recyclability details</p>
+            </div>
+        </div>
+
+        {% if materials %}
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Material</th>
+                        <th>Category</th>
+                        <th>Quantity</th>
+                        <th>Origin</th>
+                        <th>Recyclable</th>
+                        <th>Recyclability %</th>
+                        <th>Carbon Impact</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in materials %}
+                    <tr>
+                        <td>{{ item.component_name }}</td>
+                        <td>{{ item.material_name }}</td>
+                        <td>{{ item.material_category }}</td>
+                        <td>{{ item.quantity }} {{ item.unit }}</td>
+                        <td>{{ item.origin }}</td>
+                        <td>{{ item.recyclable }}</td>
+                        <td>{{ item.recyclability_percentage }}%</td>
+                        <td>{{ item.carbon_impact_kg }} kg</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            <span class="empty-icon">🧩</span>
+            No material information is currently available.
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- 3. Lifecycle -->
+    
+<!-- 3. Lifecycle Timeline -->
+<section class="section">
+
+    <div class="section-heading">
+        <div class="section-number">03</div>
+
+        <div>
+            <h2>Product Lifecycle Journey</h2>
+            <p>A visual timeline of important events throughout the product's journey</p>
+        </div>
+    </div>
+
+    {% if lifecycle %}
+
+    <span class="timeline-count">
+        {{ lifecycle|length }} Recorded Events
+    </span>
+
+    <div class="timeline">
+
+        {% for event in lifecycle %}
+
+        {% set event_name = event.event_type|string|lower %}
+
+        {% if 'manufacturing' in event_name %}
+            {% set event_icon = '🏭' %}
+        {% elif 'distribution' in event_name %}
+            {% set event_icon = '🚚' %}
+        {% elif 'sale' in event_name %}
+            {% set event_icon = '🛍️' %}
+        {% elif 'ownership' in event_name %}
+            {% set event_icon = '👤' %}
+        {% elif 'maintenance' in event_name %}
+            {% set event_icon = '🔧' %}
+        {% elif 'repair' in event_name %}
+            {% set event_icon = '🛠️' %}
+        {% elif 'replacement' in event_name %}
+            {% set event_icon = '🔩' %}
+        {% elif 'reuse' in event_name %}
+            {% set event_icon = '🔄' %}
+        {% elif 'refurbishment' in event_name %}
+            {% set event_icon = '✨' %}
+        {% elif 'recycling' in event_name %}
+            {% set event_icon = '♻️' %}
+        {% else %}
+            {% set event_icon = '📍' %}
+        {% endif %}
+
+        <div class="timeline-item">
+
+            <div class="timeline-marker">
+                <div class="timeline-icon">
+                    {{ event_icon }}
+                </div>
+            </div>
+
+            <div class="timeline-card">
+
+                <div class="timeline-card-top">
+
+                    <span class="timeline-event-name">
+                        {{ event.event_type }}
+                    </span>
+
+                    <span class="timeline-date">
+                        {{ event.event_date.strftime('%d %b %Y') if event.event_date else 'Date unavailable' }}
+                    </span>
+
+                </div>
+
+                <p class="timeline-description">
+                    {{ event.description or 'No additional description provided.' }}
+                </p>
+
+                {% if event.location %}
+
+                <span class="timeline-location">
+                    📍 {{ event.location }}
+                </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+        <span class="empty-icon">📍</span>
+        No lifecycle events have been recorded for this product yet.
+    </div>
+
+    {% endif %}
+
+</section>
+
+
+    <!-- 4. Ownership -->
+    <section class="section">
+
+        <div class="section-heading">
+            <div class="section-number">04</div>
+
+            <div>
+                <h2>Ownership History</h2>
+                <p>Recorded ownership and transfer information</p>
+            </div>
+        </div>
+
+        {% if ownership %}
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Owner</th>
+                        <th>Owner Type</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Transfer Reason</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in ownership %}
+                    <tr>
+                        <td>{{ item.owner_name }}</td>
+                        <td>{{ item.owner_type }}</td>
+                        <td>{{ item.start_date }}</td>
+                        <td>{{ item.end_date or "Current Owner" }}</td>
+                        <td>{{ item.transfer_reason }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            <span class="empty-icon">👤</span>
+            No ownership information is currently available.
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- 5. Maintenance -->
+    <section class="section">
+
+        <div class="section-heading">
+            <div class="section-number">05</div>
+
+            <div>
+                <h2>Maintenance & Repair History</h2>
+                <p>Service records and maintenance activities</p>
+            </div>
+        </div>
+
+        {% if maintenance %}
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Technician</th>
+                        <th>Service Center</th>
+                        <th>Cost</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in maintenance %}
+                    <tr>
+                        <td>{{ item.maintenance_date }}</td>
+                        <td>{{ item.maintenance_type }}</td>
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.technician_name }}</td>
+                        <td>{{ item.service_center }}</td>
+                        <td>{{ item.cost }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            <span class="empty-icon">🔧</span>
+            No maintenance records are currently available.
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- 6. Recycling -->
+    <section class="section">
+
+        <div class="section-heading">
+            <div class="section-number">06</div>
+
+            <div>
+                <h2>Recycling & Sustainability</h2>
+                <p>Material recovery and end-of-life information</p>
+            </div>
+        </div>
+
+        {% if recycling %}
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Facility</th>
+                        <th>Method</th>
+                        <th>Recovered Material</th>
+                        <th>Quantity</th>
+                        <th>Recovery %</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in recycling %}
+                    <tr>
+                        <td>{{ item.recycling_date }}</td>
+                        <td>{{ item.recycling_facility }}</td>
+                        <td>{{ item.recycling_method }}</td>
+                        <td>{{ item.recovered_material }}</td>
+                        <td>{{ item.recovered_quantity }}</td>
+                        <td>{{ item.recovery_percentage }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            <span class="empty-icon">♻️</span>
+            No recycling records are currently available.
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+
+        <strong>🌿 DigiPass — Digital Product Passport Management System</strong>
+
+        <p>Promoting Transparency, Traceability & Sustainability</p>
+
+        <span class="footer-tag">
+            A STEP TOWARDS A MORE SUSTAINABLE FUTURE
+        </span>
+
+    </footer>
+
+</div>
+
+
+<script>
+    function toggleTheme() {
+        const html = document.documentElement;
+
+        const currentTheme = html.getAttribute("data-theme");
+
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+        html.setAttribute("data-theme", newTheme);
+
+        try {
+            localStorage.setItem("dpp-public-theme", newTheme);
+        } catch (error) {
+            // Theme still works for the current page if storage is unavailable.
+        }
+    }
+
+    // Restore the visitor's previous theme preference.
+    try {
+        const savedTheme = localStorage.getItem("dpp-public-theme");
+
+        if (savedTheme === "dark" || savedTheme === "light") {
+            document.documentElement.setAttribute("data-theme", savedTheme);
+        }
+    } catch (error) {
+        // Use the default light theme.
+    }
+</script>
+
+</body>
+</html>

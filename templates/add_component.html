@@ -1,0 +1,519 @@
+
+{% extends "base.html" %}
+
+{% block title %}Add Component | DigiPass{% endblock %}
+
+{% block breadcrumb %}
+<span>Manufacturer</span>
+<span class="breadcrumb-separator">/</span>
+<span>Add Component</span>
+{% endblock %}
+
+{% block page_title %}Add Product Component{% endblock %}
+
+{% block page_subtitle %}
+Document the materials and components that make up your product.
+{% endblock %}
+
+{% block content %}
+
+<style>
+.component-page {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.component-intro {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 24px;
+    margin-bottom: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+}
+
+.component-intro-icon {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 15px;
+    background: rgba(91, 139, 101, 0.13);
+    font-size: 25px;
+}
+
+.component-intro h3 {
+    margin: 0 0 5px;
+    color: var(--heading);
+    font-size: 17px;
+}
+
+.component-intro p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.component-card {
+    padding: 30px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(30, 60, 40, 0.04);
+}
+
+.component-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 22px;
+}
+
+.component-section-icon {
+    width: 39px;
+    height: 39px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(91, 139, 101, 0.12);
+    border-radius: 12px;
+    font-size: 19px;
+}
+
+.component-section-heading h3 {
+    margin: 0;
+    color: var(--heading);
+    font-size: 16px;
+}
+
+.component-section-heading p {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.component-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 21px;
+}
+
+.component-form-group {
+    min-width: 0;
+}
+
+.component-form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.component-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--heading);
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.required-star {
+    color: #bd715b;
+}
+
+.component-form-group input,
+.component-form-group select {
+    width: 100%;
+    min-height: 45px;
+    padding: 11px 13px;
+    color: var(--text);
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    font-family: inherit;
+    font-size: 13px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.component-form-group input:focus,
+.component-form-group select:focus {
+    border-color: #6b9b75;
+    box-shadow: 0 0 0 3px rgba(107, 155, 117, 0.13);
+}
+
+.component-form-group select option {
+    color: var(--text);
+    background: var(--surface);
+}
+
+.component-form-group input::placeholder {
+    color: var(--muted);
+    opacity: 0.75;
+}
+
+.component-field-hint {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.component-divider {
+    height: 1px;
+    margin: 28px 0 23px;
+    background: var(--border);
+}
+
+.component-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 14px 16px;
+    margin-top: 24px;
+    background: rgba(91, 139, 101, 0.08);
+    border: 1px solid rgba(91, 139, 101, 0.19);
+    border-radius: 12px;
+}
+
+.component-info span {
+    font-size: 17px;
+}
+
+.component-info p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.component-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.component-note {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.component-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.component-cancel-btn,
+.component-submit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 43px;
+    padding: 0 19px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 650;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.component-cancel-btn {
+    color: var(--text);
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+}
+
+.component-cancel-btn:hover {
+    border-color: #83a68a;
+}
+
+.component-submit-btn {
+    color: white;
+    background: #326b4b;
+    border: 1px solid #326b4b;
+}
+
+.component-submit-btn:hover {
+    background: #24563a;
+    transform: translateY(-1px);
+}
+
+.component-flash-messages {
+    margin-bottom: 20px;
+}
+
+.component-flash-message {
+    padding: 12px 15px;
+    margin-bottom: 9px;
+    color: var(--text);
+    background: rgba(190, 143, 92, 0.12);
+    border: 1px solid rgba(190, 143, 92, 0.3);
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+@media (max-width: 650px) {
+    .component-card {
+        padding: 21px 17px;
+    }
+
+    .component-form-grid {
+        grid-template-columns: 1fr;
+        gap: 17px;
+    }
+
+    .component-form-group.full-width {
+        grid-column: auto;
+    }
+
+    .component-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .component-buttons {
+        width: 100%;
+    }
+
+    .component-buttons a,
+    .component-buttons button {
+        flex: 1;
+    }
+}
+</style>
+
+<div class="component-page">
+
+    <div class="component-intro">
+        <div class="component-intro-icon">🧩</div>
+        <div>
+            <h3>Build your product's material profile</h3>
+            <p>
+                Connect a product with its individual components and the
+                materials used to manufacture them. This information helps
+                track resource usage and sustainability.
+            </p>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="component-flash-messages">
+                {% for message in messages %}
+                    <div class="component-flash-message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="component-card">
+
+        <div class="component-section-heading">
+            <div class="component-section-icon">🔗</div>
+            <div>
+                <h3>Product Association</h3>
+                <p>Select the product and its corresponding material.</p>
+            </div>
+        </div>
+
+        <form method="POST" onsubmit="return validateComponentForm()">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+
+                <div class="component-form-group">
+                    <label>
+                        Select Product <span class="required-star">*</span>
+                    </label>
+
+                    <select name="product_id" required>
+                        <option value="">Choose a product</option>
+
+                        {% for product in products %}
+                            <option value="{{ product[0] }}">
+                                {{ product[0] }} - {{ product[1] }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <span class="component-field-hint">
+                        Choose the product this component belongs to.
+                    </span>
+                </div>
+
+                <div class="component-form-group">
+                    <label>
+                        Select Material <span class="required-star">*</span>
+                    </label>
+
+                    <select name="material_id" required>
+                        <option value="">Choose a material</option>
+
+                        {% for material in materials %}
+                            <option value="{{ material[0] }}">
+                                {{ material[1] }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <span class="component-field-hint">
+                        Select the primary material used in the component.
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="component-divider"></div>
+
+            <div class="component-section-heading">
+                <div class="component-section-icon">⚙️</div>
+                <div>
+                    <h3>Component Details</h3>
+                    <p>Describe the component and specify its quantity.</p>
+                </div>
+            </div>
+
+            <div class="component-form-grid">
+
+                <div class="component-form-group full-width">
+                    <label>
+                        Component Name <span class="required-star">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="component_name"
+                        placeholder="Example: Aluminium Body"
+                        required
+                    >
+
+                    <span class="component-field-hint">
+                        Enter a descriptive name for the component.
+                    </span>
+                </div>
+
+                <div class="component-form-group">
+                    <label>
+                        Quantity <span class="required-star">*</span>
+                    </label>
+
+                    <input
+                        type="number"
+                        name="quantity"
+                        placeholder="Example: 1.20"
+                        step="0.01"
+                        min="0.01"
+                        required
+                    >
+
+                    <span class="component-field-hint">
+                        Quantity must be greater than zero.
+                    </span>
+                </div>
+
+                <div class="component-form-group">
+                    <label>
+                        Unit <span class="required-star">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="unit"
+                        placeholder="Example: kg, gram, piece"
+                        required
+                    >
+
+                    <span class="component-field-hint">
+                        Specify the measurement unit.
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="component-info">
+                <span>🌿</span>
+                <p>
+                    <strong>Why does this matter?</strong>
+                    Component and material records help calculate the
+                    product's material composition and support its
+                    environmental impact and recycling assessment.
+                </p>
+            </div>
+
+            <div class="component-divider"></div>
+
+            <div class="component-actions">
+
+                <span class="component-note">
+                    * All fields are mandatory.
+                </span>
+
+                <div class="component-buttons">
+                    <a
+                        href="{{ url_for('manufacturer_products') }}"
+                        class="component-cancel-btn"
+                    >
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="component-submit-btn">
+                        Add Component →
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+<script>
+function validateComponentForm() {
+
+    const productId = document.querySelector(
+        '[name="product_id"]'
+    ).value;
+
+    const materialId = document.querySelector(
+        '[name="material_id"]'
+    ).value;
+
+    const componentName = document.querySelector(
+        '[name="component_name"]'
+    ).value.trim();
+
+    const quantity = document.querySelector(
+        '[name="quantity"]'
+    ).value;
+
+    const unit = document.querySelector(
+        '[name="unit"]'
+    ).value.trim();
+
+    if (!productId || !materialId || !componentName ||
+        !quantity || !unit) {
+
+        alert("Please complete all component fields.");
+        return false;
+    }
+
+    if (Number(quantity) <= 0) {
+        alert("Component quantity must be greater than zero.");
+        return false;
+    }
+
+    return true;
+}
+</script>
+
+{% endblock %}

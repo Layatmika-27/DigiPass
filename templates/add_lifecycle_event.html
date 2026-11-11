@@ -1,0 +1,504 @@
+
+{% extends "base.html" %}
+
+{% block title %}Add Lifecycle Event | DigiPass{% endblock %}
+
+{% block breadcrumb %}
+<span>Manufacturer</span>
+<span class="breadcrumb-separator">/</span>
+<span>Lifecycle Tracking</span>
+{% endblock %}
+
+{% block page_title %}Product Lifecycle Tracking{% endblock %}
+
+{% block page_subtitle %}
+Record important milestones throughout your product's journey.
+{% endblock %}
+
+{% block content %}
+
+<style>
+.lifecycle-page {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.lifecycle-intro {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 24px;
+    margin-bottom: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+}
+
+.lifecycle-intro-icon {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 15px;
+    background: rgba(91, 139, 101, 0.13);
+    font-size: 25px;
+}
+
+.lifecycle-intro h3 {
+    margin: 0 0 5px;
+    color: var(--heading);
+    font-size: 17px;
+}
+
+.lifecycle-intro p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.lifecycle-card {
+    padding: 30px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(30, 60, 40, 0.04);
+}
+
+.lifecycle-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 22px;
+}
+
+.lifecycle-section-icon {
+    width: 39px;
+    height: 39px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(91, 139, 101, 0.12);
+    border-radius: 12px;
+    font-size: 19px;
+}
+
+.lifecycle-section-heading h3 {
+    margin: 0;
+    color: var(--heading);
+    font-size: 16px;
+}
+
+.lifecycle-section-heading p {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.lifecycle-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 21px;
+}
+
+.lifecycle-form-group {
+    min-width: 0;
+}
+
+.lifecycle-form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.lifecycle-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--heading);
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.lifecycle-required {
+    color: #bd715b;
+}
+
+.lifecycle-form-group input,
+.lifecycle-form-group select,
+.lifecycle-form-group textarea {
+    width: 100%;
+    min-height: 45px;
+    padding: 11px 13px;
+    color: var(--text);
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    font-family: inherit;
+    font-size: 13px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.lifecycle-form-group textarea {
+    min-height: 115px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.lifecycle-form-group input:focus,
+.lifecycle-form-group select:focus,
+.lifecycle-form-group textarea:focus {
+    border-color: #6b9b75;
+    box-shadow: 0 0 0 3px rgba(107, 155, 117, 0.13);
+}
+
+.lifecycle-form-group select option {
+    color: var(--text);
+    background: var(--surface);
+}
+
+.lifecycle-form-group input::placeholder,
+.lifecycle-form-group textarea::placeholder {
+    color: var(--muted);
+    opacity: 0.75;
+}
+
+.lifecycle-field-hint {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.lifecycle-divider {
+    height: 1px;
+    margin: 28px 0 23px;
+    background: var(--border);
+}
+
+.lifecycle-event-guide {
+    padding: 17px 19px;
+    margin-top: 24px;
+    background: rgba(91, 139, 101, 0.08);
+    border: 1px solid rgba(91, 139, 101, 0.19);
+    border-radius: 13px;
+}
+
+.lifecycle-event-guide h4 {
+    margin: 0 0 10px;
+    color: var(--heading);
+    font-size: 13px;
+}
+
+.lifecycle-event-guide p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.lifecycle-event-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 12px;
+}
+
+.lifecycle-event-tags span {
+    padding: 6px 10px;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 11px;
+}
+
+.lifecycle-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.lifecycle-note {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.lifecycle-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lifecycle-cancel-btn,
+.lifecycle-submit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 43px;
+    padding: 0 19px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 650;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.lifecycle-cancel-btn {
+    color: var(--text);
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+}
+
+.lifecycle-cancel-btn:hover {
+    border-color: #83a68a;
+}
+
+.lifecycle-submit-btn {
+    color: white;
+    background: #326b4b;
+    border: 1px solid #326b4b;
+}
+
+.lifecycle-submit-btn:hover {
+    background: #24563a;
+    transform: translateY(-1px);
+}
+
+.lifecycle-flash-messages {
+    margin-bottom: 20px;
+}
+
+.lifecycle-flash-message {
+    padding: 12px 15px;
+    margin-bottom: 9px;
+    color: var(--text);
+    background: rgba(190, 143, 92, 0.12);
+    border: 1px solid rgba(190, 143, 92, 0.3);
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+@media (max-width: 650px) {
+    .lifecycle-card {
+        padding: 21px 17px;
+    }
+
+    .lifecycle-form-grid {
+        grid-template-columns: 1fr;
+        gap: 17px;
+    }
+
+    .lifecycle-form-group.full-width {
+        grid-column: auto;
+    }
+
+    .lifecycle-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .lifecycle-buttons {
+        width: 100%;
+    }
+
+    .lifecycle-buttons a,
+    .lifecycle-buttons button {
+        flex: 1;
+    }
+}
+</style>
+
+<div class="lifecycle-page">
+
+    <div class="lifecycle-intro">
+        <div class="lifecycle-intro-icon">🔄</div>
+        <div>
+            <h3>Every product has a journey</h3>
+            <p>
+                Track the important stages of a product's life, from
+                manufacturing and distribution to maintenance, refurbishment
+                and recycling.
+            </p>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="lifecycle-flash-messages">
+                {% for message in messages %}
+                    <div class="lifecycle-flash-message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="lifecycle-card">
+
+        <div class="lifecycle-section-heading">
+            <div class="lifecycle-section-icon">📦</div>
+            <div>
+                <h3>Product & Event Information</h3>
+                <p>Choose the product and identify the lifecycle milestone.</p>
+            </div>
+        </div>
+
+        <form method="POST">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="lifecycle-form-grid">
+
+                <div class="lifecycle-form-group full-width">
+                    <label>
+                        Select Product
+                        <span class="lifecycle-required">*</span>
+                    </label>
+
+                    <select name="product_id" required>
+                        <option value="">Choose a product</option>
+
+                        {% for product in products %}
+                            <option value="{{ product[0] }}">
+                                {{ product[0] }} - {{ product[1] }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <span class="lifecycle-field-hint">
+                        Select the product whose history you want to update.
+                    </span>
+                </div>
+
+                <div class="lifecycle-form-group">
+                    <label>
+                        Event Type
+                        <span class="lifecycle-required">*</span>
+                    </label>
+
+                    <select name="event_type" required>
+                        <option value="">Choose event type</option>
+                        <option>Manufacturing</option>
+                        <option>Distribution</option>
+                        <option>Sale</option>
+                        <option>Ownership Transfer</option>
+                        <option>Maintenance</option>
+                        <option>Repair</option>
+                        <option>Component Replacement</option>
+                        <option>Reuse</option>
+                        <option>Refurbishment</option>
+                        <option>Recycling</option>
+                    </select>
+
+                    <span class="lifecycle-field-hint">
+                        Choose the milestone being recorded.
+                    </span>
+                </div>
+
+                <div class="lifecycle-form-group">
+                    <label>
+                        Event Date
+                        <span class="lifecycle-required">*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        name="event_date"
+                        required
+                    >
+
+                    <span class="lifecycle-field-hint">
+                        Date when the event occurred.
+                    </span>
+                </div>
+
+                <div class="lifecycle-form-group full-width">
+                    <label>
+                        Location
+                        <span class="lifecycle-required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="location"
+                        placeholder="Example: Chennai, India"
+                        required
+                    >
+
+                    <span class="lifecycle-field-hint">
+                        Enter the city or facility where the event took place.
+                    </span>
+                </div>
+
+                <div class="lifecycle-form-group full-width">
+                    <label>
+                        Description
+                        <span class="lifecycle-required">*</span>
+                    </label>
+
+                    <textarea
+                        name="description"
+                        rows="4"
+                        placeholder="Describe what happened during this lifecycle event..."
+                        required
+                    ></textarea>
+
+                    <span class="lifecycle-field-hint">
+                        Add relevant details to maintain a clear product history.
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="lifecycle-event-guide">
+                <h4>🌱 Lifecycle stages you can record</h4>
+                <p>
+                    Maintain a traceable history of the product through
+                    important events across its entire lifecycle.
+                </p>
+
+                <div class="lifecycle-event-tags">
+                    <span>🏭 Manufacturing</span>
+                    <span>🚚 Distribution</span>
+                    <span>🛒 Sale</span>
+                    <span>🔧 Maintenance</span>
+                    <span>♻️ Refurbishment</span>
+                    <span>🌿 Recycling</span>
+                </div>
+            </div>
+
+            <div class="lifecycle-divider"></div>
+
+            <div class="lifecycle-actions">
+
+                <span class="lifecycle-note">
+                    * All fields are mandatory.
+                </span>
+
+                <div class="lifecycle-buttons">
+                    <a
+                        href="{{ url_for('manufacturer_products') }}"
+                        class="lifecycle-cancel-btn"
+                    >
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="lifecycle-submit-btn">
+                        Add Lifecycle Event →
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

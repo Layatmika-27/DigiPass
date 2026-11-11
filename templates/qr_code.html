@@ -1,0 +1,356 @@
+
+{% extends "base.html" %}
+
+{% block title %}Product QR Code | DigiPass{% endblock %}
+
+{% block breadcrumb %}
+<span>Products</span>
+<span class="breadcrumb-separator">/</span>
+<span>Product QR Code</span>
+{% endblock %}
+
+{% block page_title %}Product QR Code{% endblock %}
+{% block page_subtitle %}
+Your product's digital identity, ready to scan and share.
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .qr-page {
+        max-width: 850px;
+        margin: 0 auto;
+    }
+
+    .qr-card {
+        overflow: hidden;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+    }
+
+    .qr-card-header {
+        padding: 26px;
+        text-align: center;
+        background: rgba(76, 135, 91, 0.09);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .qr-brand-icon {
+        width: 54px;
+        height: 54px;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 13px;
+        border-radius: 17px;
+        background: rgba(76, 135, 91, 0.17);
+        font-size: 25px;
+    }
+
+    .qr-card-header h2 {
+        margin: 0 0 7px;
+        color: var(--heading);
+        font-size: 21px;
+    }
+
+    .qr-card-header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .qr-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 34px 24px;
+        text-align: center;
+    }
+
+    .qr-product-label {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .qr-product-id {
+        margin-top: 8px;
+        color: var(--heading);
+        font-size: 25px;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+    }
+
+    .qr-image-frame {
+        display: grid;
+        place-items: center;
+        margin: 26px 0 19px;
+        padding: 17px;
+        background: #ffffff;
+        border: 1px solid #e1e9e1;
+        border-radius: 19px;
+        box-shadow: 0 8px 25px rgba(30, 70, 40, 0.08);
+    }
+
+    .qr-image {
+        display: block;
+        width: 250px;
+        height: 250px;
+        max-width: 100%;
+        object-fit: contain;
+    }
+
+    .qr-instruction {
+        max-width: 390px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .qr-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 25px;
+    }
+
+    .qr-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 19px;
+        border: none;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .qr-primary {
+        background: #286B50;
+        color: white;
+    }
+
+    .qr-primary:hover {
+        background: #1D553E;
+        transform: translateY(-1px);
+    }
+
+    .qr-secondary {
+        background: var(--input-bg);
+        border: 1px solid var(--border);
+        color: var(--text);
+    }
+
+    .qr-secondary:hover {
+        border-color: #609574;
+        transform: translateY(-1px);
+    }
+
+    .qr-note {
+        margin-top: 24px;
+        padding: 14px 17px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--input-bg);
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .qr-footer {
+        padding: 17px 23px;
+        text-align: center;
+        border-top: 1px solid var(--border);
+    }
+
+    .qr-back {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .qr-back:hover {
+        color: var(--heading);
+    }
+
+    @media (max-width: 500px) {
+        .qr-content {
+            padding: 27px 16px;
+        }
+
+        .qr-image {
+            width: 220px;
+            height: 220px;
+        }
+
+        .qr-actions {
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .qr-button {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+
+    /* Print-friendly QR sheet */
+    @media print {
+        body {
+            background: #ffffff !important;
+            color: #000000 !important;
+        }
+
+        .sidebar,
+        .topbar,
+        nav,
+        header,
+        footer,
+        .qr-actions,
+        .qr-footer,
+        .breadcrumb,
+        .page-header {
+            display: none !important;
+        }
+
+        .qr-page {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .qr-card {
+            border: none;
+            box-shadow: none;
+        }
+
+        .qr-card-header {
+            background: #ffffff !important;
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .qr-card-header h2,
+        .qr-product-id,
+        .qr-product-label {
+            color: #000000 !important;
+        }
+
+        .qr-card-header p,
+        .qr-instruction {
+            color: #444444 !important;
+        }
+
+        .qr-image-frame {
+            box-shadow: none;
+            border: 1px solid #dddddd;
+        }
+
+        .qr-note {
+            background: #ffffff !important;
+            color: #333333 !important;
+        }
+
+        .qr-content {
+            padding: 30px;
+        }
+    }
+</style>
+
+<div class="qr-page">
+
+    <div class="qr-card">
+
+        <!-- Header -->
+        <div class="qr-card-header">
+
+            <div class="qr-brand-icon">♻️</div>
+
+            <h2>Digital Product Passport</h2>
+
+            <p>
+                A unique digital identity for product transparency,
+                traceability and sustainability.
+            </p>
+
+        </div>
+
+        <!-- QR Code -->
+        <div class="qr-content">
+
+            <div class="qr-product-label">
+                Product Identification
+            </div>
+
+            <div class="qr-product-id">
+                {{ product_id }}
+            </div>
+
+            <div class="qr-image-frame">
+
+                <img
+                    src="{{ url_for('static', filename=qr_image) }}"
+                    alt="QR Code for product {{ product_id }}"
+                    class="qr-image"
+                >
+
+            </div>
+
+            <p class="qr-instruction">
+                Scan this QR code using your smartphone camera
+                to access the product's digital passport and
+                explore its lifecycle information.
+            </p>
+
+            <!-- Actions -->
+            <div class="qr-actions">
+
+                <a
+                    href="{{ passport_url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="qr-button qr-primary"
+                >
+                    ↗ Open Product Passport
+                </a>
+
+                <button
+                    type="button"
+                    onclick="window.print()"
+                    class="qr-button qr-secondary"
+                >
+                    🖨 Print QR Code
+                </button>
+
+            </div>
+
+            <div class="qr-note">
+                <strong>Tip:</strong>
+                Keep this QR code attached to the physical product
+                or its packaging to make its digital passport
+                easily accessible.
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="qr-footer">
+            <a href="{{ url_for('dashboard') }}" class="qr-back">
+                ← Back to Dashboard
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

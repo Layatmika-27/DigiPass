@@ -1,0 +1,533 @@
+
+{% extends "base.html" %}
+
+{% block title %}Add Ownership Record | DigiPass{% endblock %}
+
+{% block breadcrumb %}
+<span>Manufacturer</span>
+<span class="breadcrumb-separator">/</span>
+<span>Ownership Management</span>
+{% endblock %}
+
+{% block page_title %}Product Ownership Management{% endblock %}
+
+{% block page_subtitle %}
+Record product ownership and maintain a transparent transfer history.
+{% endblock %}
+
+{% block content %}
+
+<style>
+.ownership-page {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.ownership-intro {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 24px;
+    margin-bottom: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+}
+
+.ownership-intro-icon {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 15px;
+    background: rgba(91, 139, 101, 0.13);
+    font-size: 25px;
+}
+
+.ownership-intro h3 {
+    margin: 0 0 5px;
+    color: var(--heading);
+    font-size: 17px;
+}
+
+.ownership-intro p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.ownership-card {
+    padding: 30px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(30, 60, 40, 0.04);
+}
+
+.ownership-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 22px;
+}
+
+.ownership-section-icon {
+    width: 39px;
+    height: 39px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(91, 139, 101, 0.12);
+    border-radius: 12px;
+    font-size: 19px;
+}
+
+.ownership-section-heading h3 {
+    margin: 0;
+    color: var(--heading);
+    font-size: 16px;
+}
+
+.ownership-section-heading p {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.ownership-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 21px;
+}
+
+.ownership-form-group {
+    min-width: 0;
+}
+
+.ownership-form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.ownership-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--heading);
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.ownership-required {
+    color: #bd715b;
+}
+
+.ownership-optional {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 400;
+}
+
+.ownership-form-group input,
+.ownership-form-group select,
+.ownership-form-group textarea {
+    width: 100%;
+    min-height: 45px;
+    padding: 11px 13px;
+    color: var(--text);
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    font-family: inherit;
+    font-size: 13px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ownership-form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.ownership-form-group input:focus,
+.ownership-form-group select:focus,
+.ownership-form-group textarea:focus {
+    border-color: #6b9b75;
+    box-shadow: 0 0 0 3px rgba(107, 155, 117, 0.13);
+}
+
+.ownership-form-group select option {
+    color: var(--text);
+    background: var(--surface);
+}
+
+.ownership-form-group input::placeholder,
+.ownership-form-group textarea::placeholder {
+    color: var(--muted);
+    opacity: 0.75;
+}
+
+.ownership-field-hint {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.ownership-divider {
+    height: 1px;
+    margin: 28px 0 23px;
+    background: var(--border);
+}
+
+.ownership-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 15px 17px;
+    margin-top: 24px;
+    background: rgba(91, 139, 101, 0.08);
+    border: 1px solid rgba(91, 139, 101, 0.19);
+    border-radius: 12px;
+}
+
+.ownership-info-icon {
+    font-size: 18px;
+}
+
+.ownership-info p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.ownership-info strong {
+    color: var(--heading);
+}
+
+.ownership-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.ownership-note {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.ownership-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ownership-cancel-btn,
+.ownership-submit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 43px;
+    padding: 0 19px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 650;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.ownership-cancel-btn {
+    color: var(--text);
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+}
+
+.ownership-cancel-btn:hover {
+    border-color: #83a68a;
+}
+
+.ownership-submit-btn {
+    color: white;
+    background: #326b4b;
+    border: 1px solid #326b4b;
+}
+
+.ownership-submit-btn:hover {
+    background: #24563a;
+    transform: translateY(-1px);
+}
+
+.ownership-flash-messages {
+    margin-bottom: 20px;
+}
+
+.ownership-flash-message {
+    padding: 12px 15px;
+    margin-bottom: 9px;
+    color: var(--text);
+    background: rgba(190, 143, 92, 0.12);
+    border: 1px solid rgba(190, 143, 92, 0.3);
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+@media (max-width: 650px) {
+    .ownership-card {
+        padding: 21px 17px;
+    }
+
+    .ownership-form-grid {
+        grid-template-columns: 1fr;
+        gap: 17px;
+    }
+
+    .ownership-form-group.full-width {
+        grid-column: auto;
+    }
+
+    .ownership-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .ownership-buttons {
+        width: 100%;
+    }
+
+    .ownership-buttons a,
+    .ownership-buttons button {
+        flex: 1;
+    }
+}
+</style>
+
+<div class="ownership-page">
+
+    <div class="ownership-intro">
+        <div class="ownership-intro-icon">🤝</div>
+        <div>
+            <h3>Every transfer tells a story</h3>
+            <p>
+                Maintain a transparent record of product ownership,
+                from the manufacturer and distributor to the final customer.
+                Build a traceable chain of responsibility.
+            </p>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="ownership-flash-messages">
+                {% for message in messages %}
+                    <div class="ownership-flash-message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="ownership-card">
+
+        <div class="ownership-section-heading">
+            <div class="ownership-section-icon">📦</div>
+            <div>
+                <h3>Product Selection</h3>
+                <p>Choose the product whose ownership you want to record.</p>
+            </div>
+        </div>
+
+        <form method="POST">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="ownership-form-grid">
+
+                <div class="ownership-form-group full-width">
+                    <label>
+                        Select Product
+                        <span class="ownership-required">*</span>
+                    </label>
+
+                    <select name="product_id" required>
+                        <option value="">Choose a product</option>
+
+                        {% for product in products %}
+                            <option value="{{ product[0] }}">
+                                {{ product[0] }} - {{ product[1] }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <span class="ownership-field-hint">
+                        Select the product for which ownership details are being added.
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="ownership-divider"></div>
+
+            <div class="ownership-section-heading">
+                <div class="ownership-section-icon">👤</div>
+                <div>
+                    <h3>Owner Information</h3>
+                    <p>Enter the identity and category of the product owner.</p>
+                </div>
+            </div>
+
+            <div class="ownership-form-grid">
+
+                <div class="ownership-form-group">
+                    <label>
+                        Owner Name
+                        <span class="ownership-required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="owner_name"
+                        placeholder="Example: Rahul Sharma"
+                        required
+                    >
+
+                    <span class="ownership-field-hint">
+                        Full name of the individual or organization.
+                    </span>
+                </div>
+
+                <div class="ownership-form-group">
+                    <label>
+                        Owner Type
+                        <span class="ownership-required">*</span>
+                    </label>
+
+                    <select name="owner_type" required>
+                        <option value="">Choose owner type</option>
+                        <option>Manufacturer</option>
+                        <option>Distributor</option>
+                        <option>Retailer</option>
+                        <option>Customer</option>
+                        <option>Service Center</option>
+                        <option>Recycler</option>
+                    </select>
+
+                    <span class="ownership-field-hint">
+                        Select the owner's role in the product lifecycle.
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="ownership-divider"></div>
+
+            <div class="ownership-section-heading">
+                <div class="ownership-section-icon">📅</div>
+                <div>
+                    <h3>Ownership Timeline</h3>
+                    <p>Specify the period during which the owner held the product.</p>
+                </div>
+            </div>
+
+            <div class="ownership-form-grid">
+
+                <div class="ownership-form-group">
+                    <label>
+                        Ownership Start Date
+                        <span class="ownership-required">*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        name="start_date"
+                        required
+                    >
+
+                    <span class="ownership-field-hint">
+                        Date when ownership began.
+                    </span>
+                </div>
+
+                <div class="ownership-form-group">
+                    <label>
+                        Ownership End Date
+                        <span class="ownership-optional">(Optional)</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        name="end_date"
+                    >
+
+                    <span class="ownership-field-hint">
+                        Leave blank if this is the current owner.
+                    </span>
+                </div>
+
+                <div class="ownership-form-group full-width">
+                    <label>
+                        Transfer Reason
+                        <span class="ownership-optional">(Optional)</span>
+                    </label>
+
+                    <textarea
+                        name="transfer_reason"
+                        rows="3"
+                        placeholder="Example: Product sold to customer, transferred to distributor, or sent for refurbishment..."
+                    ></textarea>
+
+                    <span class="ownership-field-hint">
+                        Briefly explain why ownership changed or was recorded.
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="ownership-info">
+                <span class="ownership-info-icon">🌿</span>
+                <p>
+                    <strong>Ownership transparency</strong><br>
+                    A complete ownership history helps establish product
+                    traceability, supports responsible transfers, and
+                    makes the Digital Product Passport more reliable.
+                    Leave the end date empty when recording an ongoing
+                    ownership period.
+                </p>
+            </div>
+
+            <div class="ownership-divider"></div>
+
+            <div class="ownership-actions">
+
+                <span class="ownership-note">
+                    * Required fields. End date and transfer reason are optional.
+                </span>
+
+                <div class="ownership-buttons">
+                    <a
+                        href="{{ url_for('manufacturer_products') }}"
+                        class="ownership-cancel-btn"
+                    >
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="ownership-submit-btn">
+                        Add Ownership Record →
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}
