@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from db import get_db_connection
 
 from io import BytesIO
+from flask import send_file
 
 from flask import make_response
 
@@ -1756,6 +1757,7 @@ def admin_analytics():
         average_recovery=average_recovery
     )
 
+
 @app.route("/generate-qr/<product_id>")
 @role_required(
     "Admin",
@@ -1788,64 +1790,66 @@ def generate_qr(product_id):
             flash("Product not found.")
             return redirect(url_for("search_product"))
 
-        # Generate the product passport URL
         passport_url = url_for(
             "public_passport",
             product_id=product_id,
             _external=True
         )
 
-        # Generate QR code
-        qr = qrcode.QRCode(
-            version=1,
-            box_size=10,
-            border=4
-        )
-
-        qr.add_data(passport_url)
-        qr.make(fit=True)
-
-        qr_image = qr.make_image(
-            fill_color="black",
-            back_color="white"
-        )
-
-        # Create QR code folder if it doesn't exist
-        qr_folder = os.path.join(
-            app.root_path,
-            "static",
-            "qrcodes"
-        )
-
-        os.makedirs(qr_folder, exist_ok=True)
-
-        # Save QR code image
-        qr_path = os.path.join(
-            qr_folder,
-            f"{product_id}.png"
-        )
-
-        qr_image.save(qr_path)
-
         flash("QR code generated successfully!")
 
         return render_template(
             "qr_code.html",
             product_id=product_id,
-            qr_image=f"qrcodes/{product_id}.png",
+            qr_image=url_for(
+                "qr_image",
+                product_id=product_id
+            ),
             passport_url=passport_url
         )
 
     except Exception as e:
         print("QR generation error:", e)
         flash("Unable to generate QR code.")
-
         return redirect(url_for("dashboard"))
 
     finally:
         cursor.close()
         conn.close()
 
+
+@app.route("/qr-image/<product_id>")
+def qr_image(product_id):
+
+    qr = qrcode.QRCode(
+        version=1,
+        box_size=10,
+        border=4
+    )
+
+    passport_url = url_for(
+        "public_passport",
+        product_id=product_id,
+        _external=True
+    )
+
+    qr.add_data(passport_url)
+    qr.make(fit=True)
+
+    qr_image = qr.make_image(
+        fill_color="black",
+        back_color="white"
+    )
+
+    image_buffer = BytesIO()
+    qr_image.save(image_buffer, format="PNG")
+    image_buffer.seek(0)
+
+    return send_file(
+        image_buffer,
+        mimetype="image/png",
+        download_name=f"{product_id}.png"
+    )
 
 @app.route("/public-passport/<product_id>")
 def public_passport(product_id):
@@ -2376,4 +2380,8 @@ def download_passport(product_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=5000,
+        debug=True
+    )
